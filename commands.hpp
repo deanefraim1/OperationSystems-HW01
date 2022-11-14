@@ -5,7 +5,7 @@
 #include <time.h>
 #include <stdlib.h>
 #include <csignal>
-#include <string.h>
+#include <string>
 #include <sys/types.h>
 #include <sys/wait.h>
 #include <list>
@@ -16,9 +16,9 @@ using namespace std;
 #define MAX_LINE_SIZE 80
 #define MAX_ARG 20
 
-int ExeComp(char* lineSize);
-int BgCmd(char* lineSize, list<Job> jobs);
-int ExeCmd(list<Job> jobs, char* lineSize, char* cmdString);
-void ExeExternal(char *args[MAX_ARG], char* cmdString);
+int ExeComp(string lineSize);
+int BgCmd(string lineSize, list<Job> jobs);
+int ExeCmd(list<Job> jobs, string lineSize, string cmdString);
+void ExeExternal(string args[MAX_ARG], string cmdString);
 #endif
 

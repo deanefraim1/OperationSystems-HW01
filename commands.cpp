@@ -3,6 +3,8 @@
 #include "commands.hpp"
 #include <list>
 #include "Job.hpp"
+#include <string>
+#include <iostream>
 
 using namespace std;
 //********************************************
@@ -11,69 +13,70 @@ using namespace std;
 // Parameters: pointer to jobs, command string
 // Returns: 0 - success,1 - failure
 //**************************************************************************************
-int ExeCmd(list<Job> jobs, char* lineSize, char* cmdString)
+int ExeCmd(list<Job> jobs, string lineSize, string cmdString)
 {
-	char* cmd; 
-	char* args[MAX_ARG];
-	char pwd[MAX_LINE_SIZE];
-	char* delimiters = " \t\n";  
+	string cmd;
+	string args[MAX_ARG];
+	string pwd;
+	string delimiters = " \t\n";  
 	int i = 0, num_arg = 0;
 	bool illegal_cmd = false; // illegal command
-    	cmd = strtok(lineSize, delimiters);
-	if (cmd == NULL)
-		return 0; 
-   	args[0] = cmd;
+	cmd = strtok(strdup(lineSize.c_str()), strdup(delimiters.c_str()));
+	if(cmd.empty()) return 0; //TODO: or null returned from strtok???
+	args[0] = cmd;
 	for (i=1; i<MAX_ARG; i++)
 	{
-		args[i] = strtok(NULL, delimiters); 
-		if (args[i] != NULL) 
+		args[i] = strtok(NULL, strdup(delimiters.c_str())); 
+		if (!args[i].empty()) 
 			num_arg++; 
  
 	}
+
+
 /*************************************************/
 // Built in Commands PLEASE NOTE NOT ALL REQUIRED
 // ARE IN THIS CHAIN OF IF COMMANDS. PLEASE ADD
 // MORE IF STATEMENTS AS REQUIRED
 /*************************************************/
-	if (!strcmp(cmd, "cd") ) 
+	if (cmd == "cd") 
 	{
 		
 	} 
 	
 	/*************************************************/
-	else if (!strcmp(cmd, "pwd")) 
+	else if (cmd == "pwd") 
 	{
 		
 	}
 	
 	/*************************************************/
-	else if (!strcmp(cmd, "mkdir"))
+	else if (cmd == "mkdir")
 	{
  		
 	}
 	/*************************************************/
 	
-	else if (!strcmp(cmd, "jobs")) 
+	else if (cmd == "jobs") 
 	{
  		
 	}
 	/*************************************************/
-	else if (!strcmp(cmd, "showpid")) 
+	else if (cmd == "showpid") 
 	{
 		
 	}
 	/*************************************************/
-	else if (!strcmp(cmd, "fg")) 
+	else if (cmd == "fg") 
 	{
 		
 	} 
 	/*************************************************/
-	else if (!strcmp(cmd, "bg")) 
+	else if (cmd == "bg") 
 	{
   		
 	}
 	/*************************************************/
-	else if (!strcmp(cmd, "quit"))
+	else if (cmd == "quit")
 	{
    		
 	} 
@@ -85,7 +88,7 @@ int ExeCmd(list<Job> jobs, char* lineSize, char* cmdString)
 	}
 	if (illegal_cmd == true)
 	{
-		printf("smash error: > \"%s\"\n", cmdString);
+		cout << "smash error: > \"" << cmdString << "\"\n" << endl;
 		return 1;
 	}
     return 0;
@@ -96,7 +99,7 @@ int ExeCmd(list<Job> jobs, char* lineSize, char* cmdString)
 // Parameters: external command arguments, external command string
 // Returns: void
 //**************************************************************************************
-void ExeExternal(char *args[MAX_ARG], char* cmdString)
+void ExeExternal(string args[MAX_ARG], string cmdString)
 {
 	int pID;
     	switch(pID = fork()) 
@@ -122,7 +125,8 @@ void ExeExternal(char *args[MAX_ARG], char* cmdString)
 					/*
 					your code
 					*/
-	}
+					int i = 0;
+			}
 }
 //**************************************************************************************
 // function name: ExeComp
@@ -130,11 +134,11 @@ void ExeExternal(char *args[MAX_ARG], char* cmdString)
 // Parameters: command string
 // Returns: 0- if complicated -1- if not
 //**************************************************************************************
-int ExeComp(char* lineSize)
+int ExeComp(string lineSize)
 {
-	char ExtCmd[MAX_LINE_SIZE+2];
-	char *args[MAX_ARG];
-    if ((strstr(lineSize, "|")) || (strstr(lineSize, "<")) || (strstr(lineSize, ">")) || (strstr(lineSize, "*")) || (strstr(lineSize, "?")) || (strstr(lineSize, ">>")) || (strstr(lineSize, "|&")))
+	string ExtCmd;
+	string args[MAX_ARG];
+    if ((lineSize.contains("|")) || (lineSize.contains("<")) || (lineSize.contains(">")) || (lineSize.contains("*")) || (lineSize.contains("?")) || (lineSize.contains(">>")) || (lineSize.contains("|&")))
     {
 		// Add your code here (execute a complicated command)
 					
@@ -150,17 +154,17 @@ int ExeComp(char* lineSize)
 // Parameters: command string, pointer to jobs
 // Returns: 0- BG command -1- if not
 //**************************************************************************************
-int BgCmd(char* lineSize, list<Job> jobs)
+int BgCmd(string lineSize, list<Job> jobs)
 {
 
-	char* Command;
-	char* delimiters = " \t\n";
-	char *args[MAX_ARG];
-	if (lineSize[strlen(lineSize)-2] == '&')
+	string Command;
+	string delimiters = " \t\n";
+	string args[MAX_ARG];
+	if (lineSize.back() == '&')
 	{
-		lineSize[strlen(lineSize)-2] = '\0';
+		lineSize.pop_back();
 		// Add your code here (execute a in the background)
-					
+
 		/* 
 		your code
 		*/
