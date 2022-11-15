@@ -48,7 +48,7 @@ int main(int argc, char *argv[])
     	while (1)
     	{
 	 	cout << "smash > ";
-		fgets(lineSize, MAX_LINE_SIZE, stdin); //TODO: how to replace for strings??
+		getline(cin, lineSize);
 		cmdString = lineSize;
 					// perform a complicated Command
 		if(!ExeComp(lineSize)) continue; 
