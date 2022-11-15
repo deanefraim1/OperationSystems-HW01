@@ -10,7 +10,7 @@ using namespace std;
 
 //********************************************
 // function name: ExeCmd
-// Description: interperts and executes built-in commands
+// Description: interperts and executes built-in OR external commands
 // Parameters: pointer to jobs, command string
 // Returns: 0 - success,1 - failure
 //**************************************************************************************
@@ -171,7 +171,7 @@ int BgCmd(string lineSize, list<Job> jobs)
 	{
 		lineSize.pop_back();
 		// Add your code here (execute a in the background)
-
+		
 		/* 
 		your code
 		*/

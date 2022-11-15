@@ -54,7 +54,7 @@ int main(int argc, char *argv[])
 		if(!ExeComp(lineSize)) continue; 
 					// background command	
 	 	if(!BgCmd(lineSize, jobs)) continue; 
-					// built in commands
+					// built in OR external commands
 		ExeCmd(jobs, lineSize, cmdString);
 		
 		/* initialize for next line read*/
