@@ -7,6 +7,7 @@
 #include <iostream>
 
 using namespace std;
+
 //********************************************
 // function name: ExeCmd
 // Description: interperts and executes built-in commands
@@ -138,7 +139,13 @@ int ExeComp(string lineSize)
 {
 	string ExtCmd;
 	string args[MAX_ARG];
-    if ((lineSize.contains("|")) || (lineSize.contains("<")) || (lineSize.contains(">")) || (lineSize.contains("*")) || (lineSize.contains("?")) || (lineSize.contains(">>")) || (lineSize.contains("|&")))
+    if ((lineSize.find("|") != string::npos) 
+		 || (lineSize.find("<") != string::npos)
+		 || (lineSize.find(">") != string::npos) 
+		 || (lineSize.find("*") != string::npos) 
+		 || (lineSize.find("?") != string::npos) 
+		 || (lineSize.find(">>") != string::npos) 
+		 || (lineSize.find("|&") != string::npos))
     {
 		// Add your code here (execute a complicated command)
 					
