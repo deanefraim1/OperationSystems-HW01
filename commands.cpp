@@ -139,13 +139,13 @@ int ExeComp(string lineSize)
 {
 	string ExtCmd;
 	string args[MAX_ARG];
-    if ((lineSize.find("|") != string::npos) 
-		 || (lineSize.find("<") != string::npos)
-		 || (lineSize.find(">") != string::npos) 
-		 || (lineSize.find("*") != string::npos) 
-		 || (lineSize.find("?") != string::npos) 
-		 || (lineSize.find(">>") != string::npos) 
-		 || (lineSize.find("|&") != string::npos))
+    if (lineSize.contains("|") 
+		 || lineSize.contains("<")
+		 || lineSize.contains(">") 
+		 || lineSize.contains("*") 
+		 || lineSize.contains("?") 
+		 || lineSize.contains(">>") 
+		 || lineSize.contains("|&"))
     {
 		// Add your code here (execute a complicated command)
 					
