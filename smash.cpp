@@ -58,9 +58,9 @@ int main(int argc, char *argv[])
 		ExeCmd(jobs, lineSize, cmdString);
 		
 		/* initialize for next line read*/
-		lineSize[0]='\0';
-		cmdString[0]='\0';
-	}
-    return 0;
+		lineSize.clear();
+		cmdString.clear();
+		}
+	return 0;
 }
 
