@@ -1,6 +1,6 @@
 # Makefile for the smash program
 CXX = g++
-CXXFLAGS = -g -Wall -std=c++23
+CXXFLAGS = -g -Wall -std=c++2b
 CXXLINK = $(CXX)
 OBJS = smash.o commands.o signals.o
 RM = rm -f
