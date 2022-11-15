@@ -89,7 +89,7 @@ int ExeCmd(list<Job> jobs, string lineSize, string cmdString)
 	}
 	if (illegal_cmd == true)
 	{
-		cout << "smash error: > \"" << cmdString << "\"\n" << endl;
+		cout << "smash error: \"" << cmdString << "\"" << endl;
 		return 1;
 	}
     return 0;
