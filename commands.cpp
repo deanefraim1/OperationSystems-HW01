@@ -42,8 +42,8 @@ int ExeCmd(list<Job> jobs, string lineSize, string cmdString)
 	if (cmd == "cd") 
 	{
 		
-	} 
-	
+	}
+
 	/*************************************************/
 	else if (cmd == "pwd") 
 	{
