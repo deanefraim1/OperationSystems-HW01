@@ -18,9 +18,9 @@ main file. This file contains the main function of smash
 
 using namespace std;
 
-string L_Fg_Cmd;
 list<Job> jobs; //This represents the list of jobs. Please change to a preferred type (e.g array of char*)
-string lineSize; 
+string prompt;
+string cwd;
 //**************************************************************************************
 // function name: main
 // Description: main function of smash. get command from user and calls command functions
@@ -48,17 +48,17 @@ int main(int argc, char *argv[])
     	while (1)
     	{
 	 	cout << "smash > ";
-		getline(cin, lineSize);
-		cmdString = lineSize;
+		getline(cin, prompt);
+		cmdString = prompt;
 					// perform a complicated Command
-		if(!ExeComp(lineSize)) continue; 
+		if(!ExeComp(prompt)) continue; 
 					// background command	
-	 	if(!BgCmd(lineSize, jobs)) continue; 
+	 	if(!BgCmd(prompt, jobs)) continue; 
 					// built in OR external commands
-		ExeCmd(jobs, lineSize, cmdString);
+		ExeCmd(jobs, prompt, cmdString);
 		
 		/* initialize for next line read*/
-		lineSize.clear();
+		prompt.clear();
 		cmdString.clear();
 		}
 	return 0;
