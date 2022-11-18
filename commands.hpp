@@ -8,17 +8,22 @@
 #include <string>
 #include <sys/types.h>
 #include <sys/wait.h>
-#include <list>
+#include <vector>
+#include <iostream>
 #include "Job.hpp"
+#include "Shell.hpp"
+
+
 
 using namespace std;
 
 #define MAX_LINE_SIZE 80
 #define MAX_ARG 20
+#define ERROR -1
 
 int ExeComp(string lineSize);
-int BgCmd(string lineSize, list<Job> jobs);
-int ExeCmd(list<Job> jobs, string lineSize, string cmdString);
+int BgCmd(string lineSize);
+int ExeCmd(string lineSize, string cmdString);
 void ExeExternal(string args[MAX_ARG], string cmdString);
-#endif
 
+#endif

@@ -8,7 +8,8 @@
 #include <string>
 #include <csignal>
 
-
+void SignalHandler_ctrZ(int signal); //SIGSTOP
+void SignalHandler_ctrC(int signal); //SIGKILL
 
 #endif
 

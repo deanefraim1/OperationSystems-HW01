@@ -8,10 +8,11 @@ RM = rm -f
 smash: $(OBJS)
 	$(CXXLINK) -o smash $(OBJS)
 # Creating the object files
-smash.o: smash.cpp commands.hpp commands.hpp signals.hpp Job.hpp
-commands.o: commands.cpp commands.hpp Job.hpp
-signals.o: signals.cpp signals.hpp
+smash.o: smash.cpp commands.hpp signals.hpp Job.hpp Shell.hpp
+commands.o: commands.cpp commands.hpp Job.hpp Shell.hpp
+signals.o: signals.cpp signals.hpp Shell.hpp
 Job.o: Job.cpp Job.hpp
+Shell.o: Shell.cpp Shell.hpp
 # Cleaning old files before new make
 clean:
 	$(RM) $(TARGET) *.o *~ "#"* core.*

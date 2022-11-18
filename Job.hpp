@@ -8,7 +8,25 @@
 #include <string>
 #include <csignal>
 
-class Job { };
+using namespace std;
+
+enum jobStatus
+{
+    running,
+    waiting,
+    stopped
+};
+
+class Job
+{
+public:
+
+    jobStatus status;
+    int PID;
+    int jobID;
+    string command;
+    int secondElapsed;
+};
 
 #endif
 
