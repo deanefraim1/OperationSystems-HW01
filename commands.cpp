@@ -123,7 +123,7 @@ int ExeCmd(string prompt, string cmdString)
 		bool jobFound = false;
 		if ((num_arg == 0) && (shell.jobs.empty()))
 			cout << "smash error: fg: jobs list is empty" << endl;
-		else if((num_arg != 1) || (!regex_match(args[1], regex("(\d)+"))))
+		else if((num_arg != 1) || (!regex_match(args[1], regex("(\\d)+"))))
 			cout << "smash error: fg: invalid arguments" << endl;
 		else
 		{
@@ -167,7 +167,7 @@ int ExeCmd(string prompt, string cmdString)
 	}
 	else if (cmd == "kill")
 	{
-		if(num_arg != 2 || regex_match(args[1], regex("-(\d)+")) || regex_match(args[2], regex("(\d)+"))) 
+		if(num_arg != 2 || regex_match(args[1], regex("-(\\d)+")) || regex_match(args[2], regex("(\\d)+"))) 
 			cout << "smash error: kill: invalid arguments";
 		else
 		{
