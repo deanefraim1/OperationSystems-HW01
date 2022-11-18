@@ -120,8 +120,41 @@ int ExeCmd(string prompt, string cmdString)
 	/*************************************************/
 	else if (cmd == "fg") 
 	{
-		
-	} 
+		bool jobFound = false;
+		if ((num_arg == 0) && (shell.jobs.empty()))
+			cout << "smash error: fg: jobs list is empty" << endl;
+		else if((num_arg != 1) || (!regex_match(args[1], regex("(\d)+"))))
+			cout << "smash error: fg: invalid arguments" << endl;
+		else
+		{
+			int jobIDToFg = atoi(args[1].c_str());
+			for (int i = 0; i < shell.jobs.size(); i++)
+			{
+				if(shell.jobs[i].jobID == jobIDToFg)
+				{
+					Job jobToFg = shell.jobs[i];
+					shell.jobs.erase(shell.jobs.begin() + i);
+					for (int j = 0; j < shell.jobs.size(); j++)
+					{
+						if(shell.jobs[j].jobID > shell.fgJob.jobID)
+						{
+							shell.jobs.insert(shell.jobs.begin() + j, shell.fgJob);
+							shell.jobs[j].status = waiting;
+							break;
+						}
+					}
+					shell.fgJob = jobToFg;
+					shell.fgJob.status = running;
+					jobFound = true;
+					break;
+				}
+			}
+			if(!jobFound)
+			{
+				cout << "smash error: fg: job-id <" << jobIDToFg << " > does not exist " << endl;
+			}
+		}
+	}
 	/*************************************************/
 	else if (cmd == "bg") 
 	{
@@ -134,8 +167,26 @@ int ExeCmd(string prompt, string cmdString)
 	}
 	else if (cmd == "kill")
 	{
-		if(num_arg != 2 || regex_match(args[1], regex("-(\d)+")) || regex_match(args[2], regex("-(\d)+"))) 
+		if(num_arg != 2 || regex_match(args[1], regex("-(\d)+")) || regex_match(args[2], regex("(\d)+"))) 
 			cout << "smash error: kill: invalid arguments";
+		else
+		{
+			int sigNum = atoi(args[1].substr(1, args[1].length()).c_str());
+			int jobID = atoi(args[2].c_str());
+			bool jobFound = false;
+			for (int i = 0; i < shell.jobs.size(); i++)
+			{
+				if(shell.jobs[i].jobID == jobID)
+				{
+					kill(shell.jobs[i].PID, sigNum);
+					jobFound = true;
+					cout << "signal number " << sigNum << "was sent to pid " << shell.jobs[i].PID << endl;
+					break;
+				}
+			}
+			if(!jobFound)
+				cout << "smash error: kill: job-id <" << jobID << "> does not exist" << endl;
+		}
 	}
 	/*************************************************/
 	else // external command

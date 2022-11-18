@@ -7,7 +7,7 @@
 class Shell
 {
 public:
-    int fgJobPID;
+    Job fgJob;
     vector<Job> jobs; // This represents the list of jobs. Please change to a preferred type (e.g array of char*)
     string pwd;
     string lastPwd;
