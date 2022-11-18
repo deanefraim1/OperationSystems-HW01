@@ -82,7 +82,6 @@ int ExeCmd(string prompt, string cmdString)
 		else
 		{
 			cout << "smash error: cd: too many arguments" << endl;
-			illegal_cmd = true;
 		}
 	}
 
