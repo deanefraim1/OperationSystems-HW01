@@ -23,19 +23,19 @@ int ExeCmd(string prompt, string cmdString)
 	string cmd;
 	string args[MAX_ARG];
 	string delimiters = " \t\n";  
-	int i = 0, num_arg = 0;
+	int num_arg = 0;
 	bool illegal_cmd = false; // illegal command
 	char *tmp = strtok(strdup(prompt.c_str()), strdup(delimiters.c_str()));
 	if(tmp != NULL)
 		cmd = tmp;
 	if(cmd.empty()) return 0; //TODO: or null returned from strtok???
 	args[0] = cmd;
-	for (i = 1; i < MAX_ARG; i++)
+	for (int i = 1; i < MAX_ARG; i++)
 	{
-		char *tmp = strtok(NULL, strdup(delimiters.c_str()));
-		if(tmp == NULL)
+		char *currentArg = strtok(NULL, strdup(delimiters.c_str()));
+		if(currentArg == NULL)
 			break;
-		args[i] = tmp;
+		args[i] = currentArg;
 		num_arg++;
 	}
 
@@ -50,13 +50,13 @@ int ExeCmd(string prompt, string cmdString)
 		{
 			if(args[1] == "..")
 			{
-				string temp = shell.pwd.substr(0, shell.pwd.find_last_of('/'));
-				if (chdir(temp.c_str()) == ERROR)
-					cerr << "cd";
+				string newPwd = shell.pwd.substr(0, shell.pwd.find_last_of('/'));
+				if (chdir(newPwd.c_str()) == ERROR)
+					illegal_cmd = true;
 				else
 				{
 					shell.lastPwd = shell.pwd;
-					shell.pwd = args[1];
+					shell.pwd = newPwd;
 				}
 			}
 			else if(args[1] == "-")
@@ -71,7 +71,8 @@ int ExeCmd(string prompt, string cmdString)
 			}
 			else 
 			{
-				if(chdir(args[1].c_str()) == ERROR) cerr << "cd";
+				if(chdir(args[1].c_str()) == ERROR)
+					illegal_cmd = true;
 				else
 				{
 					shell.lastPwd = shell.pwd;
@@ -107,7 +108,7 @@ int ExeCmd(string prompt, string cmdString)
 		{
 			cout << "[" << shell.jobs[i].jobID << "] " << shell.jobs[i].command << " : " << shell.jobs[i].PID << " " << shell.jobs[i].secondElapsed << "secs";
 			if(shell.jobs[i].status == stopped)
-				cout << "stopped";
+				cout << "(stopped)";
 			cout << endl;
 		}
 	}
@@ -120,37 +121,25 @@ int ExeCmd(string prompt, string cmdString)
 	else if (cmd == "fg") 
 	{
 		bool jobFound = false;
-		if ((num_arg == 0) && (shell.jobs.empty()))
-			cout << "smash error: fg: jobs list is empty" << endl;
+		if (num_arg == 0)
+		{
+			if(shell.jobs.empty())
+				cout << "smash error: fg: jobs list is empty" << endl;
+			else 
+				shell.SwapFgJobSortedWith(shell.jobs.end());
+		}
+			
 		else if((num_arg != 1) || (!regex_match(args[1], regex("(\\d)+"))))
 			cout << "smash error: fg: invalid arguments" << endl;
 		else
 		{
 			int jobIDToFg = atoi(args[1].c_str());
-			for (int i = 0; i < shell.jobs.size(); i++)
+			int jobIndexToFg = shell.GetJobByJobID(jobIDToFg);
+			if(jobIndexToFg == NOT_EXCIST)
+				cout << "smash error: fg: job-id " << jobIDToFg << " does not exist " << endl;
+			else
 			{
-				if(shell.jobs[i].jobID == jobIDToFg)
-				{
-					Job jobToFg = shell.jobs[i];
-					shell.jobs.erase(shell.jobs.begin() + i);
-					for (int j = 0; j < shell.jobs.size(); j++)
-					{
-						if(shell.jobs[j].jobID > shell.fgJob.jobID)
-						{
-							shell.jobs.insert(shell.jobs.begin() + j, shell.fgJob);
-							shell.jobs[j].status = waiting;
-							break;
-						}
-					}
-					shell.fgJob = jobToFg;
-					shell.fgJob.status = running;
-					jobFound = true;
-					break;
-				}
-			}
-			if(!jobFound)
-			{
-				cout << "smash error: fg: job-id <" << jobIDToFg << " > does not exist " << endl;
+				shell.SwapFgJobSortedWith(shell.jobs.begin() + jobIndexToFg);
 			}
 		}
 	}

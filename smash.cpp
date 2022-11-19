@@ -18,7 +18,6 @@ main file. This file contains the main function of smash
 using namespace std;
 
 Shell shell;
-string prompt;
 //**************************************************************************************
 // function name: main
 // Description: main function of smash. get command from user and calls command functions
@@ -26,6 +25,7 @@ string prompt;
 int main(int argc, char *argv[])
 {
     string cmdString;
+	string prompt;
 	//signal declaretions
 	//NOTE: the signal handlers and the function/s that sets the handler should be found in siganls.cpp
 
