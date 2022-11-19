@@ -3,6 +3,14 @@
 #include <vector>
 
 #define NOT_EXCIST -1
+#define MAX_LINE_SIZE 80
+
+Shell::Shell()
+{
+    char buffer[MAX_LINE_SIZE];
+    getcwd(buffer, MAX_LINE_SIZE);
+    pwd = buffer;
+}
 
 /// @brief search for a job with a given job id in the jobs vector of the shell
 /// @param id the wanted job id
