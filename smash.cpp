@@ -17,14 +17,15 @@ main file. This file contains the main function of smash
 
 using namespace std;
 
-Shell shell;
+Shell *shell;
 //**************************************************************************************
 // function name: main
 // Description: main function of smash. get command from user and calls command functions
 //**************************************************************************************
 int main(int argc, char *argv[])
 {
-    string cmdString;
+	shell = new Shell();
+	string cmdString;
 	string prompt;
 	//signal declaretions
 	//NOTE: the signal handlers and the function/s that sets the handler should be found in siganls.cpp
@@ -52,18 +53,18 @@ int main(int argc, char *argv[])
 	{
 	 	cout << "smash > ";
 		getline(cin, prompt);
-		cmdString = prompt;
 					// perform a complicated Command
 		if(!ExeComp(prompt)) continue; 
 					// background command	
 	 	if(!BgCmd(prompt)) continue; 
 					// built in OR external commands
-		ExeCmd(prompt, cmdString);
+		ExeCmd(prompt);
 
 		/* initialize for next line read*/
 		prompt.clear();
 		cmdString.clear();
 	}
+	free(shell);
 	return 0;
 }
 

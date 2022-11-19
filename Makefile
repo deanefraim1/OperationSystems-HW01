@@ -2,7 +2,7 @@
 CXX = g++
 CXXFLAGS = -g -Wall -std=c++11
 CXXLINK = $(CXX)
-OBJS = smash.o commands.o signals.o
+OBJS = smash.o commands.o signals.o Shell.o Job.o
 RM = rm -f
 # Creating the  executable
 smash: $(OBJS)

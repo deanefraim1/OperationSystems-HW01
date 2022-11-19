@@ -21,9 +21,9 @@ using namespace std;
 #define MAX_ARG 20
 #define ERROR -1
 
-int ExeComp(string lineSize);
-int BgCmd(string lineSize);
-int ExeCmd(string lineSize, string cmdString);
-void ExeExternal(string args[MAX_ARG], string cmdString);
+int ExeComp(string prompt);
+int BgCmd(string prompt);
+int ExeCmd(string prompt);
+void ExeExternal(string args[MAX_ARG], string cmd);
 
 #endif
