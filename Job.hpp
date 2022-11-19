@@ -8,6 +8,8 @@
 #include <string>
 #include <csignal>
 
+#define EMPTY -1
+
 using namespace std;
 
 enum jobStatus
@@ -23,7 +25,7 @@ public:
 
     jobStatus status;
     int PID;
-    int jobID;
+    int jobID = EMPTY;
     string command;
     int secondElapsed;
 };
