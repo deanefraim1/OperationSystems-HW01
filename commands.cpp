@@ -120,7 +120,6 @@ int ExeCmd(string prompt, string cmdString)
 	/*************************************************/
 	else if (cmd == "fg") 
 	{
-		bool jobFound = false;
 		if (num_arg == 0)
 		{
 			if(shell.jobs.empty())
@@ -217,6 +216,7 @@ void ExeExternal(string args[MAX_ARG], string cmdString)
 					your code
 					*/
 					int i = 0;
+					i++;
 			}
 }
 //**************************************************************************************

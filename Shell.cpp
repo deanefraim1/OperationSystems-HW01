@@ -1,5 +1,6 @@
 #include "Shell.hpp"
 #include "Job.hpp"
+#include <vector>
 
 #define NOT_EXCIST -1
 
