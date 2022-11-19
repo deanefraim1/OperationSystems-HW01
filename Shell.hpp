@@ -14,7 +14,9 @@ public:
     string pwd;
     string lastPwd;
 
+    /// @brief Shell constructor - initiate all the fields.
     Shell();
+
     /// @brief search for a job with a given job id in the jobs vector of the shell
     /// @param id the wanted job id
     /// @return the index of the wanted job in the vector or -1 if not excist.
