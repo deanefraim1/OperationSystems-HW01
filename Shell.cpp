@@ -46,13 +46,14 @@ void Shell::InsertJobSorted(Job job)
 
 /// @brief swap between the fg job and the given job and give the new fg job a runing status and the old fg job a waiting status
 /// @param jobIteratorToFg 
-void Shell::SwapFgJobSortedWith(vector<Job>::iterator jobIteratorToFg)
+void Shell::MoveJobToFg(vector<Job>::iterator jobIteratorToFg)
 {
     Job jobToFg = *jobIteratorToFg.base();
     jobs.erase(jobIteratorToFg);
 
-    InsertJobSorted(fgJob);
+    if(fgJob.jobID != EMPTY)
+        InsertJobSorted(fgJob);
 
-    jobToFg.status = running;
     fgJob = jobToFg;
+    fgJob.status = running;
 }

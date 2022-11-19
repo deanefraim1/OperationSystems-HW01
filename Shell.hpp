@@ -30,7 +30,7 @@ public:
 
     /// @brief swap between the fg job and the given job and give the new fg job a runing status and the old fg job a waiting status
     /// @param jobIteratorToFg 
-    void SwapFgJobSortedWith(vector<Job>::iterator jobIteratorToFg);
+    void MoveJobToFg(vector<Job>::iterator jobIteratorToFg);
 };
 
 #endif

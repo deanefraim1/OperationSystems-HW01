@@ -126,7 +126,7 @@ int ExeCmd(string prompt, string cmdString)
 			if(shell.jobs.empty())
 				cout << "smash error: fg: jobs list is empty" << endl;
 			else 
-				shell.SwapFgJobSortedWith(shell.jobs.end());
+				shell.MoveJobToFg(shell.jobs.end());
 		}
 			
 		else if((num_arg != 1) || (!regex_match(args[1], regex("(\\d)+"))))
@@ -139,7 +139,7 @@ int ExeCmd(string prompt, string cmdString)
 				cout << "smash error: fg: job-id " << jobIDToFg << " does not exist " << endl;
 			else
 			{
-				shell.SwapFgJobSortedWith(shell.jobs.begin() + jobIndexToFg);
+				shell.MoveJobToFg(shell.jobs.begin() + jobIndexToFg);
 			}
 		}
 	}
@@ -155,25 +155,20 @@ int ExeCmd(string prompt, string cmdString)
 	}
 	else if (cmd == "kill")
 	{
-		if(num_arg != 2 || regex_match(args[1], regex("-(\\d)+")) || regex_match(args[2], regex("(\\d)+"))) 
-			cout << "smash error: kill: invalid arguments";
+		if(num_arg != 2 || !regex_match(args[1], regex("-(\\d)+")) || !regex_match(args[2], regex("(\\d)+")))
+			cout << "smash error: kill: invalid arguments" << endl;
 		else
 		{
 			int sigNum = atoi(args[1].substr(1, args[1].length()).c_str());
 			int jobID = atoi(args[2].c_str());
-			bool jobFound = false;
-			for (int i = 0; i < shell.jobs.size(); i++)
-			{
-				if(shell.jobs[i].jobID == jobID)
-				{
-					kill(shell.jobs[i].PID, sigNum);
-					jobFound = true;
-					cout << "signal number " << sigNum << "was sent to pid " << shell.jobs[i].PID << endl;
-					break;
-				}
-			}
-			if(!jobFound)
+			int jobIndexToKill = shell.GetJobByJobID(jobID);
+			if(jobIndexToKill == NOT_EXCIST)
 				cout << "smash error: kill: job-id <" << jobID << "> does not exist" << endl;
+			else
+			{
+				kill(shell.jobs[jobIndexToKill].PID, sigNum);
+				cout << "signal number " << sigNum << "was sent to pid " << shell.jobs[jobIndexToKill].PID << endl;
+			}
 		}
 	}
 	/*************************************************/
