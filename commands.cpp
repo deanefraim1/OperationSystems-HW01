@@ -10,15 +10,16 @@
 
 using namespace std;
 
+extern Shell *shell;
+
 //********************************************
 // function name: ExeCmd
 // Description: interperts and executes built-in OR external commands
 // Parameters: pointer to jobs, command string
 // Returns: 0 - success,1 - failure
 //**************************************************************************************
-extern Shell shell;
 
-int ExeCmd(string prompt, string cmdString)
+int ExeCmd(string prompt)
 {
 	string cmd;
 	string args[MAX_ARG];
@@ -50,23 +51,23 @@ int ExeCmd(string prompt, string cmdString)
 		{
 			if(args[1] == "..")
 			{
-				string newPwd = shell.pwd.substr(0, shell.pwd.find_last_of('/'));
+				string newPwd = shell->pwd.substr(0, shell->pwd.find_last_of('/'));
 				if (chdir(newPwd.c_str()) == ERROR)
 					illegal_cmd = true;
 				else
 				{
-					shell.lastPwd = shell.pwd;
-					shell.pwd = newPwd;
+					shell->lastPwd = shell->pwd;
+					shell->pwd = newPwd;
 				}
 			}
 			else if(args[1] == "-")
 			{
-				if(shell.lastPwd.empty())
+				if(shell->lastPwd.empty())
 					cout << "smash error: cd: OLDPWD not set" << endl;
 				else
 				{
-					chdir(shell.lastPwd.c_str());
-					swap(shell.pwd, shell.lastPwd);
+					chdir(shell->lastPwd.c_str());
+					swap(shell->pwd, shell->lastPwd);
 				}
 			}
 			else 
@@ -75,8 +76,8 @@ int ExeCmd(string prompt, string cmdString)
 					illegal_cmd = true;
 				else
 				{
-					shell.lastPwd = shell.pwd;
-					shell.pwd = args[1];
+					shell->lastPwd = shell->pwd;
+					shell->pwd = args[1];
 				}
 			}
 		}
@@ -90,9 +91,14 @@ int ExeCmd(string prompt, string cmdString)
 	else if (cmd == "pwd") 
 	{
 		char buffer[MAX_LINE_SIZE];
-		if(getcwd(buffer, MAX_LINE_SIZE) == NULL) cerr << "pwd";
-		shell.pwd = buffer;
-		cout << shell.pwd << endl;
+		if(getcwd(buffer, MAX_LINE_SIZE) == NULL)
+			illegal_cmd = true;
+		else
+		{
+			shell->pwd = buffer;
+			cout << shell->pwd << endl;
+		}
+		
 	}
 
 	/*************************************************/
@@ -104,10 +110,10 @@ int ExeCmd(string prompt, string cmdString)
 	
 	else if (cmd == "jobs") 
 	{
-		for (int i = 0; i < shell.jobs.size(); i++)
+		for (int i = 0; i < shell->jobs.size(); i++)
 		{
-			cout << "[" << shell.jobs[i].jobID << "] " << shell.jobs[i].command << " : " << shell.jobs[i].PID << " " << shell.jobs[i].secondElapsed << "secs";
-			if(shell.jobs[i].status == stopped)
+			cout << "[" << shell->jobs[i].jobID << "] " << shell->jobs[i].command << " : " << shell->jobs[i].PID << " " << shell->jobs[i].secondElapsed << "secs";
+			if(shell->jobs[i].status == stopped)
 				cout << "(stopped)";
 			cout << endl;
 		}
@@ -122,10 +128,10 @@ int ExeCmd(string prompt, string cmdString)
 	{
 		if (num_arg == 0)
 		{
-			if(shell.jobs.empty())
+			if(shell->jobs.empty())
 				cout << "smash error: fg: jobs list is empty" << endl;
 			else 
-				shell.MoveJobToFg(shell.jobs.end());
+				shell->MoveJobToFg(shell->jobs.end());
 		}
 			
 		else if((num_arg != 1) || (!regex_match(args[1], regex("(\\d)+"))))
@@ -133,12 +139,12 @@ int ExeCmd(string prompt, string cmdString)
 		else
 		{
 			int jobIDToFg = atoi(args[1].c_str());
-			int jobIndexToFg = shell.GetJobByJobID(jobIDToFg);
+			int jobIndexToFg = shell->GetJobByJobID(jobIDToFg);
 			if(jobIndexToFg == NOT_EXCIST)
 				cout << "smash error: fg: job-id " << jobIDToFg << " does not exist " << endl;
 			else
 			{
-				shell.MoveJobToFg(shell.jobs.begin() + jobIndexToFg);
+				shell->MoveJobToFg(shell->jobs.begin() + jobIndexToFg);
 			}
 		}
 	}
@@ -160,25 +166,25 @@ int ExeCmd(string prompt, string cmdString)
 		{
 			int sigNum = atoi(args[1].substr(1, args[1].length()).c_str());
 			int jobID = atoi(args[2].c_str());
-			int jobIndexToKill = shell.GetJobByJobID(jobID);
+			int jobIndexToKill = shell->GetJobByJobID(jobID);
 			if(jobIndexToKill == NOT_EXCIST)
 				cout << "smash error: kill: job-id <" << jobID << "> does not exist" << endl;
 			else
 			{
-				kill(shell.jobs[jobIndexToKill].PID, sigNum);
-				cout << "signal number " << sigNum << "was sent to pid " << shell.jobs[jobIndexToKill].PID << endl;
+				kill(shell->jobs[jobIndexToKill].PID, sigNum);
+				cout << "signal number " << sigNum << "was sent to pid " << shell->jobs[jobIndexToKill].PID << endl;
 			}
 		}
 	}
 	/*************************************************/
 	else // external command
 	{
- 		ExeExternal(args, cmdString);
+ 		ExeExternal(args, cmd);
 	 	return 0;
 	}
 	if (illegal_cmd == true)
 	{
-		cout << "smash error: \"" << cmdString << "\"" << endl;
+		cout << "smash error: \"" << prompt << "\"" << endl;
 		return 1;
 	}
     return 0;
@@ -189,7 +195,7 @@ int ExeCmd(string prompt, string cmdString)
 // Parameters: external command arguments, external command string
 // Returns: void
 //**************************************************************************************
-void ExeExternal(string args[MAX_ARG], string cmdString)
+void ExeExternal(string args[MAX_ARG], string cmd)
 {
 	int pID;
     	switch(pID = fork()) 
@@ -225,17 +231,17 @@ void ExeExternal(string args[MAX_ARG], string cmdString)
 // Parameters: command string
 // Returns: 0- if complicated -1- if not
 //**************************************************************************************
-int ExeComp(string lineSize)
+int ExeComp(string prompt)
 {
 	string ExtCmd;
 	string args[MAX_ARG];
-    if ((lineSize.find("|") != string::npos )
-		 || (lineSize.find(">") != string::npos)
-		 || (lineSize.find("<")!= string::npos)
-		 || (lineSize.find("*") != string::npos)
-		 || (lineSize.find("?") != string::npos)
-		 || (lineSize.find(">>") != string::npos)
-		 || (lineSize.find("|&") != string::npos))
+    if ((prompt.find("|") != string::npos )
+		 || (prompt.find(">") != string::npos)
+		 || (prompt.find("<")!= string::npos)
+		 || (prompt.find("*") != string::npos)
+		 || (prompt.find("?") != string::npos)
+		 || (prompt.find(">>") != string::npos)
+		 || (prompt.find("|&") != string::npos))
     {
 		// Add your code here (execute a complicated command)
 					
@@ -251,15 +257,15 @@ int ExeComp(string lineSize)
 // Parameters: command string, pointer to jobs
 // Returns: 0- BG command -1- if not
 //**************************************************************************************
-int BgCmd(string lineSize)
+int BgCmd(string prompt)
 {
 
 	string Command;
 	string delimiters = " \t\n";
 	string args[MAX_ARG];
-	if (lineSize.back() == '&')
+	if (prompt.back() == '&')
 	{
-		lineSize.pop_back();
+		prompt.pop_back();
 		// Add your code here (execute a in the background)
 		
 		/* 
