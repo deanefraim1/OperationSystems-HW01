@@ -1,4 +1,4 @@
-//		commands.cpp (delete)
+//		commands.cpp
 //********************************************
 #include "commands.hpp"
 #include <vector>
