@@ -152,6 +152,7 @@ int ExeCmd(string prompt)
 			{
 				shell->jobs[stoppedJobPIDWithMaxJobID].status = running;
 				kill(stoppedJobPIDWithMaxJobID, SIGCONT);
+				cout << "[" << shell->jobs[stoppedJobPIDWithMaxJobID].jobID << "] " << shell->jobs[stoppedJobPIDWithMaxJobID].command << " : " << shell->jobs[stoppedJobPIDWithMaxJobID].PID << endl;
 			}
 		}
 		else if((num_arg != 1) || (!regex_match(args[1], regex("(\\d)+"))))
@@ -167,6 +168,8 @@ int ExeCmd(string prompt)
 			{
 				shell->jobs[jobIndexToBg].status = running;
 				kill(shell->jobs[jobIndexToBg].PID, SIGCONT);
+				cout << "[" << shell->jobs[jobIndexToBg].jobID << "] " << shell->jobs[jobIndexToBg].command << " : " << shell->jobs[jobIndexToBg].PID << endl;
+
 			}
 		}
 	}
