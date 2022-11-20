@@ -131,7 +131,7 @@ int ExeCmd(string prompt)
 		else
 		{
 			int jobIDToFg = atoi(args[1].c_str());
-			int jobIndexToFg = shell->GetJobByJobID(jobIDToFg);
+			int jobIndexToFg = shell->GetJobIndexByJobID(jobIDToFg);
 			if(jobIndexToFg == NOT_EXCIST)
 				cout << "smash error: fg: job-id " << jobIDToFg << " does not exist " << endl;
 			else
@@ -143,7 +143,32 @@ int ExeCmd(string prompt)
 	/*************************************************/
 	else if (cmd == "bg") 
 	{
-  		
+  		if(num_arg == 0)
+		{
+			int stoppedJobPIDWithMaxJobID = shell->GetStoppedJobPIDWithMaxJobID();
+			if (stoppedJobPIDWithMaxJobID == NOT_EXCIST)
+				cout << "smash error: bg: there are no stopped jobs to resume" << endl;
+			else
+			{
+				shell->jobs[stoppedJobPIDWithMaxJobID].status = running;
+				kill(stoppedJobPIDWithMaxJobID, SIGCONT);
+			}
+		}
+		else if((num_arg != 1) || (!regex_match(args[1], regex("(\\d)+"))))
+			cout << "smash error: bg: invalid arguments" << endl;
+		else
+		{
+			int jobIndexToBg = shell->GetJobIndexByJobID(atoi(args[1].c_str()));
+			if (jobIndexToBg == NOT_EXCIST)
+				cout << "smash error: bg: job-id " << args[1] << " does not exist" << endl;
+			else if(shell->jobs[jobIndexToBg].status != stopped)
+				cout << "smash error: bg: job-id " << args[1] << " is already running in the background" << endl;
+			else
+			{
+				shell->jobs[jobIndexToBg].status = running;
+				kill(shell->jobs[jobIndexToBg].PID, SIGCONT);
+			}
+		}
 	}
 	/*************************************************/
 	else if (cmd == "quit")
@@ -158,7 +183,7 @@ int ExeCmd(string prompt)
 		{
 			int sigNum = atoi(args[1].substr(1, args[1].length()).c_str());
 			int jobID = atoi(args[2].c_str());
-			int jobIndexToKill = shell->GetJobByJobID(jobID);
+			int jobIndexToKill = shell->GetJobIndexByJobID(jobID);
 			if(jobIndexToKill == NOT_EXCIST)
 				cout << "smash error: kill: job-id <" << jobID << "> does not exist" << endl;
 			else

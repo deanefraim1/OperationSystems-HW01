@@ -15,7 +15,7 @@ Shell::Shell()
 /// @brief search for a job with a given job id in the jobs vector of the shell
 /// @param id the wanted job id
 /// @return the index of the wanted job in the vector or -1 if not excist.
-int Shell::GetJobByJobID(int id)
+int Shell::GetJobIndexByJobID(int id)
 {
     for (int i = 0; i < jobs.size(); i++)
     {
@@ -28,7 +28,7 @@ int Shell::GetJobByJobID(int id)
 /// @brief search for a job with a given job id in the jobs vector of the shell
 /// @param pid the wanted job pid
 /// @return the index of the wanted job in the vector or -1 if not excist.
-int Shell::GetJobByPID(int pid)
+int Shell::GetJobIndexByPID(int pid)
 {
     for (int i = 0; i < jobs.size(); i++)
     {
@@ -65,4 +65,16 @@ void Shell::MoveJobToFg(vector<Job>::iterator jobIteratorToFg)
 
     fgJob = jobToFg;
     fgJob.status = running;
+}
+
+/// @brief search for a stopped job in the jobs vector with the max job id
+/// @return the index of the job if excist or -1 if no stopped job in the job vector
+int Shell::GetStoppedJobPIDWithMaxJobID()
+{
+    for (int i = jobs.size()-1; i >= 0; i++)
+    {
+        if(jobs[i].status == stopped)
+            return jobs[i].PID;
+    }
+    return NOT_EXCIST;
 }
