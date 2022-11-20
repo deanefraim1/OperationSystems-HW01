@@ -90,15 +90,7 @@ int ExeCmd(string prompt)
 	/*************************************************/
 	else if (cmd == "pwd") 
 	{
-		char buffer[MAX_LINE_SIZE];
-		if(getcwd(buffer, MAX_LINE_SIZE) == NULL)
-			illegal_cmd = true;
-		else
-		{
-			shell->pwd = buffer;
-			cout << shell->pwd << endl;
-		}
-		
+		cout << shell->pwd << endl;
 	}
 
 	/*************************************************/
