@@ -8,6 +8,9 @@
 #include "Shell.hpp"
 #include <regex>
 
+#define SIGEXCIST 0
+#define EXCIST 0
+
 using namespace std;
 
 extern Shell *shell;
@@ -143,7 +146,7 @@ int ExeCmd(string prompt)
 	/*************************************************/
 	else if (cmd == "bg") 
 	{
-  		if(num_arg == 0)
+  		if(num_arg == 0) //no argument => find the stopped job with maximum job id
 		{
 			int stoppedJobPIDWithMaxJobID = shell->GetStoppedJobPIDWithMaxJobID();
 			if (stoppedJobPIDWithMaxJobID == NOT_EXCIST)
@@ -155,14 +158,14 @@ int ExeCmd(string prompt)
 				cout << "[" << shell->jobs[stoppedJobPIDWithMaxJobID].jobID << "] " << shell->jobs[stoppedJobPIDWithMaxJobID].command << " : " << shell->jobs[stoppedJobPIDWithMaxJobID].PID << endl;
 			}
 		}
-		else if((num_arg != 1) || (!regex_match(args[1], regex("(\\d)+"))))
+		else if((num_arg != 1) || (!regex_match(args[1], regex("(\\d)+")))) // more than 1 argument or one argument but not a number
 			cout << "smash error: bg: invalid arguments" << endl;
 		else
 		{
 			int jobIndexToBg = shell->GetJobIndexByJobID(atoi(args[1].c_str()));
 			if (jobIndexToBg == NOT_EXCIST)
 				cout << "smash error: bg: job-id " << args[1] << " does not exist" << endl;
-			else if(shell->jobs[jobIndexToBg].status != stopped)
+			else if(shell->jobs[jobIndexToBg].status != stopped) // the given job is not stopped
 				cout << "smash error: bg: job-id " << args[1] << " is already running in the background" << endl;
 			else
 			{
@@ -176,7 +179,23 @@ int ExeCmd(string prompt)
 	/*************************************************/
 	else if (cmd == "quit")
 	{
-   		
+		if(args[1] == "kill") //kill all jobs befor quit the shell
+		{
+			for (int i = 0; i < shell->jobs.size(); i++)
+			{
+				cout << "[" << shell->jobs[i].jobID << "] " << shell->jobs[i].command << " - Sending SIGTERM...";
+				kill(shell->jobs[i].PID, SIGTERM);
+				sleep(5);
+				if(kill(shell->jobs[i].PID, SIGEXCIST) == EXCIST)
+				{
+					cout << " (5 sec passed) Sending SIGKILL...";
+					kill(shell->jobs[i].PID, SIGKILL);
+				}
+				cout << " Done." << endl;
+			}
+		}
+		free(shell);
+		exit(0);
 	}
 	else if (cmd == "kill")
 	{
