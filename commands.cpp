@@ -222,19 +222,20 @@ int ExeCmd(string prompt)
 			cout << "smash error: diff: invalid arguments" << endl;
 		else
 		{
-			ifstream file1(args[1], ios::binary);
-			ifstream file2(args[2], ios::binary);
+			ifstream file1(args[1], ios::in|ios::binary|ios::ate); //open args[1] file for reading (with seek in the end to check size late), acces him through "file1"
+			ifstream file2(args[2], ios::in|ios::binary|ios::ate); //open args[2] file for reading (with seek in the end to check size late), acces him through "file2"
 			if(file1.fail() || file2.fail()) // one or more of the files failed to open
 				illegal_cmd = true;
-			else if(file1.tellg() != file2.tellg()) // the size of the files is different
+			else if(file1.tellg() != file2.tellg()) // the size of the files is different(check position of seek)
 				cout << "1" << endl;
 			else
 			{
-				file1.seekg(0, ifstream::beg);
-				file1.seekg(0, ifstream::beg);
-				return equal(istreambuf_iterator<char>(file1.rdbuf()),
-                    		 istreambuf_iterator<char>(),
-                    		 istreambuf_iterator<char>(file2.rdbuf()));
+				file1.seekg(0, ifstream::beg); // sets the seek back to the begining
+				file2.seekg(0, ifstream::beg); //sets the seek back to the begining
+				bool isEqual = equal(istreambuf_iterator<char>(file1.rdbuf()),
+									 istreambuf_iterator<char>(),
+									 istreambuf_iterator<char>(file2.rdbuf()));
+				cout << isEqual << endl;
 			}
 		}
 	}
