@@ -7,6 +7,7 @@
 #include <iostream>
 #include "Shell.hpp"
 #include <regex>
+#include <fstream>
 
 #define SIGEXCIST 0
 #define EXCIST 0
@@ -212,6 +213,28 @@ int ExeCmd(string prompt)
 			{
 				kill(shell->jobs[jobIndexToKill].PID, sigNum);
 				cout << "signal number " << sigNum << "was sent to pid " << shell->jobs[jobIndexToKill].PID << endl;
+			}
+		}
+	}
+	else if (cmd == "diff") // TODO: check what those functions acually do???
+	{
+		if(num_arg != 2)
+			cout << "smash error: diff: invalid arguments" << endl;
+		else
+		{
+			ifstream file1(args[1], ios::binary);
+			ifstream file2(args[2], ios::binary);
+			if(file1.fail() || file2.fail()) // one or more of the files failed to open
+				illegal_cmd = true;
+			else if(file1.tellg() != file2.tellg()) // the size of the files is different
+				cout << "1" << endl;
+			else
+			{
+				file1.seekg(0, ifstream::beg);
+				file1.seekg(0, ifstream::beg);
+				return equal(istreambuf_iterator<char>(file1.rdbuf()),
+                    		 istreambuf_iterator<char>(),
+                    		 istreambuf_iterator<char>(file2.rdbuf()));
 			}
 		}
 	}
