@@ -17,5 +17,5 @@ void SignalHandler_ctrZ(int signal)
 
 void SignalHandler_ctrC(int signal)
 {
-
+   cout << "asdasdassdasda";
 }
