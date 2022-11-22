@@ -30,18 +30,18 @@ int main(int argc, char *argv[])
 	//signal declaretions
 	//NOTE: the signal handlers and the function/s that sets the handler should be found in siganls.cpp
 
-	struct sigaction int_signal;
-	struct sigaction stp_signal;
+	struct sigaction intSignal;
+	struct sigaction stpSignal;
 
-	int_signal.sa_handler = SignalHandler_ctrZ;
-	stp_signal.sa_handler = SignalHandler_ctrC;
-
+	intSignal.sa_handler = SignalHandler_ctrZ;
+	stpSignal.sa_handler = SignalHandler_ctrC;
+	
 	/************************************/
 	//NOTE: the signal handlers and the function/s that sets the handler should be found in siganls.cpp
 	//set your signal handlers here
 
-	sigaction(SIGINT,  &int_signal,  NULL);
-    sigaction(SIGTSTP, &stp_signal,  NULL);
+	sigaction(SIGINT,  &intSignal,  NULL);
+    sigaction(SIGTSTP, &stpSignal,  NULL);
 
 	/************************************/
 	
@@ -51,9 +51,9 @@ int main(int argc, char *argv[])
 
 	while (1)
 	{
-	 	cout << "smash > ";
+		cout << "smash > ";
 		getline(cin, prompt);
-					// perform a complicated Command
+		// perform a complicated Command
 		if(!ExeComp(prompt)) continue; 
 					// background command	
 	 	if(!BgCmd(prompt)) continue; 
