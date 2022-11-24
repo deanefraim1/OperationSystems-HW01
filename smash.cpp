@@ -33,8 +33,10 @@ int main(int argc, char *argv[])
 	struct sigaction intSignal;
 	struct sigaction stpSignal;
 
-	intSignal.sa_handler = SignalHandler_ctrZ;
-	stpSignal.sa_handler = SignalHandler_ctrC;
+	intSignal.sa_handler = SignalHandler_ctrC;
+	intSignal.sa_flags = SA_RESTART;
+	stpSignal.sa_handler = SignalHandler_ctrZ;
+	stpSignal.sa_flags = SA_RESTART;
 
 	/************************************/
 	//NOTE: the signal handlers and the function/s that sets the handler should be found in siganls.cpp
@@ -53,8 +55,6 @@ int main(int argc, char *argv[])
 	{
 		cout << "smash > ";
 		getline(cin, prompt);
-		if (cin.fail() || cin.eof())
-			cin.clear();
 		// perform a complicated Command
 		if(!ExeComp(prompt)) continue; 
 					// background command	
