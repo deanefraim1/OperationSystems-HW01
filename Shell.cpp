@@ -47,7 +47,7 @@ void Shell::InsertJobSorted(Job job)
 		if(jobs[i].jobID > job.jobID)
 		{
 			jobs.insert(jobs.begin() + i, job);
-			jobs[i].status = waiting;
+			jobs[i].status = bgRunning;
 			break;
 		}
 	}
@@ -64,7 +64,7 @@ void Shell::MoveJobToFg(vector<Job>::iterator jobIteratorToFg)
         InsertJobSorted(fgJob);
 
     fgJob = jobToFg;
-    fgJob.status = running;
+    fgJob.status = fgRunning;
 }
 
 /// @brief search for a stopped job in the jobs vector with the max job id

@@ -141,6 +141,8 @@ int ExeCmd(string prompt)
 			else
 			{
 				shell->MoveJobToFg(shell->jobs.begin() + jobIndexToFg);
+				int status;
+				waitpid(shell->jobs[jobIndexToFg].PID, &status, 0);
 			}
 		}
 	}
@@ -154,7 +156,7 @@ int ExeCmd(string prompt)
 				cout << "smash error: bg: there are no stopped jobs to resume" << endl;
 			else
 			{
-				shell->jobs[stoppedJobPIDWithMaxJobID].status = running;
+				shell->jobs[stoppedJobPIDWithMaxJobID].status = fgRunning;
 				kill(stoppedJobPIDWithMaxJobID, SIGCONT);
 				cout << "[" << shell->jobs[stoppedJobPIDWithMaxJobID].jobID << "] " << shell->jobs[stoppedJobPIDWithMaxJobID].command << " : " << shell->jobs[stoppedJobPIDWithMaxJobID].PID << endl;
 			}
@@ -170,7 +172,7 @@ int ExeCmd(string prompt)
 				cout << "smash error: bg: job-id " << args[1] << " is already running in the background" << endl;
 			else
 			{
-				shell->jobs[jobIndexToBg].status = running;
+				shell->jobs[jobIndexToBg].status = fgRunning;
 				kill(shell->jobs[jobIndexToBg].PID, SIGCONT);
 				cout << "[" << shell->jobs[jobIndexToBg].jobID << "] " << shell->jobs[jobIndexToBg].command << " : " << shell->jobs[jobIndexToBg].PID << endl;
 
@@ -242,7 +244,7 @@ int ExeCmd(string prompt)
 	/*************************************************/
 	else // external command
 	{
- 		ExeExternal(args, cmd);
+ 		ExeExternal(args, cmd, num_arg);
 	 	return 0;
 	}
 	if (illegal_cmd == true)
@@ -258,35 +260,41 @@ int ExeCmd(string prompt)
 // Parameters: external command arguments, external command string
 // Returns: void
 //**************************************************************************************
-void ExeExternal(string args[MAX_ARG], string cmd)
+void ExeExternal(string args[MAX_ARG], string cmd, int num_arg)
 {
 	int pID;
-    	switch(pID = fork()) 
+	char **charArgs = InitStringArrayToCharArray(args, num_arg);
+	switch (pID = fork())
 	{
-    		case -1: 
-					// Add your code here (error)
-					
-					/* 
-					your code
-					*/
-        	case 0 :
-                	// Child Process
-               		setpgrp();
-					
-			        // Add your code here (execute an external command)
-					
-					/* 
-					your code
-					*/
-			
-			default:
-                	// Add your code here
-					/*
-					your code
-					*/
-					int i = 0;
-					i++;
-			}
+    	case -1: 
+		{
+			//fork returned error
+				cerr << "smash error: fork failed" << endl;
+				free(charArgs);
+		}
+				
+		case 0 :
+		{
+			// Child Process
+         		setpgrp();
+				Job newJob;
+				if (args[num_arg] == "&")
+					newJob = Job(getpid(), shell->jobs.size() + 1, cmd, bgRunning);
+				else 
+					newJob = Job(getpid(), shell->jobs.size() + 1, cmd, fgRunning);
+				if(execv(newJob.command.c_str(), charArgs) < 0)
+					cerr << "smash error: exec failed" << endl;
+				free(charArgs);
+		}
+            	
+		default:
+		{
+			// Parent Proccess
+			int status;
+			if(args[num_arg] == "&")
+				waitpid(pID, &status, 0);
+		}
+	}
 }
 //**************************************************************************************
 // function name: ExeComp
@@ -314,28 +322,13 @@ int ExeComp(string prompt)
 	} 
 	return -1;
 }
-//**************************************************************************************
-// function name: BgCmd
-// Description: if command is in background, insert the command to jobs
-// Parameters: command string, pointer to jobs
-// Returns: 0- BG command -1- if not
-//**************************************************************************************
-int BgCmd(string prompt)
+
+char **InitStringArrayToCharArray(string stringArray[], int size)
 {
-
-	string Command;
-	string delimiters = " \t\n";
-	string args[MAX_ARG];
-	if (prompt.back() == '&')
+	char **charArray = (char**)malloc(sizeof(char *) * size);
+	for (int i = 0; i < size; i++)
 	{
-		prompt.pop_back();
-		// Add your code here (execute a in the background)
-		
-		/* 
-		your code
-		*/
-		
+		charArray[i] = strdup(stringArray[i].c_str());
 	}
-	return -1;
+	return charArray;
 }
-

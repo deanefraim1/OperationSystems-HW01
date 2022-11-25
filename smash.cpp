@@ -25,7 +25,6 @@ Shell *shell;
 int main(int argc, char *argv[])
 {
 	shell = new Shell();
-	string cmdString;
 	string prompt;
 	//signal declaretions
 	//NOTE: the signal handlers and the function/s that sets the handler should be found in siganls.cpp
@@ -54,17 +53,10 @@ int main(int argc, char *argv[])
 	while (1)
 	{
 		cout << "smash > ";
-		getline(cin, prompt);
-		// perform a complicated Command
-		if(!ExeComp(prompt)) continue; 
-					// background command	
-	 	if(!BgCmd(prompt)) continue; 
-					// built in OR external commands
+		getline(cin, prompt);		
 		ExeCmd(prompt);
-
 		/* initialize for next line read*/
 		prompt.clear();
-		cmdString.clear();
 	}
 	free(shell);
 	return 0;

@@ -14,20 +14,22 @@ using namespace std;
 
 enum jobStatus
 {
-    running,
-    waiting,
+    fgRunning,
+    bgRunning,
     stopped
 };
 
 class Job
 {
 public:
-
     jobStatus status;
     int PID;
-    int jobID = EMPTY;
+    int jobID;
     string command;
     int secondElapsed;
+
+    Job();
+    Job(int PID, int jobID, string command, jobStatus status);
 };
 
 #endif

@@ -22,8 +22,8 @@ using namespace std;
 #define ERROR -1
 
 int ExeComp(string prompt);
-int BgCmd(string prompt);
 int ExeCmd(string prompt);
-void ExeExternal(string args[MAX_ARG], string cmd);
+char **InitStringArrayToCharArray(string stringArray[], int size);
+void ExeExternal(string args[MAX_ARG], string cmd, int num_arg);
 
 #endif
