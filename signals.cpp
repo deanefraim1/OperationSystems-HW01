@@ -23,6 +23,9 @@ void SignalHandler_ctrZ(int signal)
       {
          cout << "smash: process " << shell->fgJob.PID <<  " was stopped" << endl;
          shell->fgJob.status = stopped;
+         time_t currentTime;
+         time(&currentTime);
+         shell->fgJob.secondElapsed = currentTime - shell->fgJob.getCurrentRunningTime();
          shell->InsertJobSorted(shell->fgJob);
          shell->fgJob = Job();
       } 

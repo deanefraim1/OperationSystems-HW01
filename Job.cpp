@@ -12,7 +12,7 @@ Job::Job()
     this->jobID = EMPTY;
     this->command = "";
     this->status = bgRunning;
-    this->secondElapsed = 0;
+    this->secondElapsed = EMPTY;
 }
 
 Job::Job(int PID, int jobID, string command, jobStatus status)
@@ -21,7 +21,15 @@ Job::Job(int PID, int jobID, string command, jobStatus status)
     this->jobID = jobID;
     this->command = command;
     this->status = status;
-    this->secondElapsed = 0;
+    time(&(this->secondElapsed));
+}
+
+double Job::getCurrentRunningTime()
+{
+    time_t start = this->secondElapsed;
+    time_t end;
+    time(&end);
+    return difftime(end, start);
 }
 
 #endif

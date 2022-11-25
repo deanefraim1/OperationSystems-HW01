@@ -26,10 +26,11 @@ public:
     int PID;
     int jobID;
     string command;
-    int secondElapsed;
+    time_t secondElapsed;
 
     Job();
     Job(int PID, int jobID, string command, jobStatus status);
+    double getCurrentRunningTime();
 };
 
 #endif
