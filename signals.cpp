@@ -25,7 +25,7 @@ void SignalHandler_ctrZ(int signal)
          shell->fgJob.status = stopped;
          time_t currentTime;
          time(&currentTime);
-         shell->fgJob.secondElapsed = currentTime - shell->fgJob.getCurrentRunningTime();
+         shell->fgJob.timeStamp = shell->fgJob.getRunningTime(); //when job stopped the timeStamp becoms her runing time so far.
          shell->InsertJobSorted(shell->fgJob);
          shell->fgJob = Job();
       } 

@@ -63,8 +63,15 @@ void Shell::MoveJobToFg(vector<Job>::iterator jobIteratorToFg)
     if(fgJob.jobID != EMPTY)
         InsertJobSorted(fgJob);
 
+    if(jobToFg.status == stopped)
+    {
+        time_t currentTime;
+        time(&currentTime);
+        jobToFg.timeStamp = currentTime - jobToFg.timeStamp; //timeStamo equals to runTime so far (for stopped jobs)
+        fgJob.status = fgRunning;
+    }   
     fgJob = jobToFg;
-    fgJob.status = fgRunning;
+    
 }
 
 /// @brief search for a stopped job in the jobs vector with the max job id

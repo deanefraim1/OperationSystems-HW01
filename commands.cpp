@@ -108,7 +108,7 @@ int ExeCmd(string prompt)
 	{
 		for (int i = 0; i < shell->jobs.size(); i++)
 		{
-			cout << "[" << shell->jobs[i].jobID << "] " << shell->jobs[i].command << " : " << shell->jobs[i].PID << " " << shell->jobs[i].getCurrentRunningTime() << "secs";
+			cout << "[" << shell->jobs[i].jobID << "] " << shell->jobs[i].command << " : " << shell->jobs[i].PID << " " << shell->jobs[i].getRunningTime() << "secs";
 			if(shell->jobs[i].status == stopped)
 				cout << "(stopped)";
 			cout << endl;
