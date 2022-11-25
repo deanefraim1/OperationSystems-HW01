@@ -49,7 +49,7 @@ int ExeCmd(string prompt)
 	// ARE IN THIS CHAIN OF IF COMMANDS. PLEASE ADD
 	// MORE IF STATEMENTS AS REQUIRED
 	/*************************************************/
-	if (cmd == "cd") 
+	if (cmd == "cd")
 	{
 		if(num_arg == 1)
 		{
@@ -263,7 +263,7 @@ int ExeCmd(string prompt)
 void ExeExternal(string args[MAX_ARG], string cmd, int num_arg)
 {
 	int pID;
-	char **charArgs = InitStringArrayToCharArray(args, num_arg+1);
+	char **charArgs = InitStringArrayToCharArray(args, num_arg+1); //for the command +1
 	switch (pID = fork())
 	{
     	case -1: 
@@ -342,5 +342,6 @@ char **InitStringArrayToCharArray(string stringArray[], int size)
 	{
 		charArray[i] = strdup(stringArray[i].c_str());
 	}
+	charArray[size] = NULL;
 	return charArray;
 }
