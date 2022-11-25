@@ -81,6 +81,7 @@ int Shell::GetStoppedJobPIDWithMaxJobID()
 
 void Shell::InsertJobToFg(Job job)
 {
-    InsertJobSorted(fgJob);
+    if(fgJob.PID != NOT_EXCIST) 
+        InsertJobSorted(fgJob);
     fgJob = job;
 }
