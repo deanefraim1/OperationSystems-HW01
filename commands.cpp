@@ -289,9 +289,16 @@ void ExeExternal(string args[MAX_ARG], string cmd, int num_arg)
 			{
 				Job newJob;
 				if (args[num_arg] == "&")
+				{
 					newJob = Job(getpid(), shell->jobs.size() + 1, cmd, bgRunning);
-				else 
+					shell->InsertJobSorted(newJob);
+				}
+					
+				else
+				{
 					newJob = Job(getpid(), shell->jobs.size() + 1, cmd, fgRunning);
+					shell->InsertJobToFg(newJob);
+				}
 			}
 			int status;
 			if(args[num_arg] != "&")

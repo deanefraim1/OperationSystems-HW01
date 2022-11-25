@@ -78,3 +78,9 @@ int Shell::GetStoppedJobPIDWithMaxJobID()
     }
     return NOT_EXCIST;
 }
+
+void Shell::InsertJobToFg(Job job)
+{
+    InsertJobSorted(fgJob);
+    fgJob = job;
+}
