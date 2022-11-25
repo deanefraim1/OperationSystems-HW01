@@ -304,7 +304,6 @@ void ExeExternal(string args[MAX_ARG], string cmd, int num_arg)
 			if(args[num_arg] != "&")
 				waitpid(pID, &status, 0);
 			free(charArgs);
-
 		}
 	}
 }
