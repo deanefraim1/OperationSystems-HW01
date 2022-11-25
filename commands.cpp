@@ -106,6 +106,7 @@ int ExeCmd(string prompt)
 	
 	else if (cmd == "jobs") 
 	{
+		shell->UpdateJobsList();
 		for (int i = 0; i < shell->jobs.size(); i++)
 		{
 			cout << "[" << shell->jobs[i].jobID << "] " << shell->jobs[i].command << " : " << shell->jobs[i].PID << " " << shell->jobs[i].getRunningTime() << "secs";
@@ -341,6 +342,9 @@ char **InitStringArrayToCharArray(string stringArray[], int size)
 	{
 		charArray[i] = strdup(stringArray[i].c_str());
 	}
-	charArray[size] = NULL;
+	if(strcmp(charArray[size-1],"&") == 0)
+		charArray[size - 1] = NULL;
+	else 
+		charArray[size] = NULL;
 	return charArray;
 }

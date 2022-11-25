@@ -4,6 +4,9 @@
 
 #define NOT_EXCIST -1
 #define MAX_LINE_SIZE 80
+#define SIGEXCIST 0
+#define EXCIST 0
+
 
 Shell::Shell()
 {
@@ -90,4 +93,13 @@ void Shell::InsertJobToFg(Job job)
     if(fgJob.PID != NOT_EXCIST) 
         InsertJobSorted(fgJob);
     fgJob = job;
+}
+
+void Shell::UpdateJobsList()
+{
+    for (int i = 0; i < jobs.size(); i++)
+    {
+        if(kill(jobs[i].PID, SIGEXCIST) != EXCIST)
+            jobs.erase(jobs.begin() + i);
+    }
 }

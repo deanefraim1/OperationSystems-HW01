@@ -42,6 +42,9 @@ public:
     /// @brief 
     /// @param job 
     void InsertJobToFg(Job job);
+
+    /// @brief 
+    void UpdateJobsList();
 };
 
 #endif
