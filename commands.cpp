@@ -263,7 +263,7 @@ int ExeCmd(string prompt)
 void ExeExternal(string args[MAX_ARG], string cmd, int num_arg)
 {
 	int pID;
-	char **charArgs = InitStringArrayToCharArray(args, num_arg);
+	char **charArgs = InitStringArrayToCharArray(args, num_arg+1);
 	switch (pID = fork())
 	{
     	case -1: 
@@ -277,22 +277,27 @@ void ExeExternal(string args[MAX_ARG], string cmd, int num_arg)
 		{
 			// Child Process
          		setpgrp();
+				execvp(cmd.c_str(), charArgs);
+				cerr << "smash error: exec failed" << endl;
+				exit(1);
+		}
+
+		default:
+		{
+			// Parent Proccess
+			if(kill(pID, SIGEXCIST) == EXCIST)
+			{
 				Job newJob;
 				if (args[num_arg] == "&")
 					newJob = Job(getpid(), shell->jobs.size() + 1, cmd, bgRunning);
 				else 
 					newJob = Job(getpid(), shell->jobs.size() + 1, cmd, fgRunning);
-				if(execv(newJob.command.c_str(), charArgs) < 0)
-					cerr << "smash error: exec failed" << endl;
-				free(charArgs);
-		}
-            	
-		default:
-		{
-			// Parent Proccess
+			}
 			int status;
-			if(args[num_arg] == "&")
+			if(args[num_arg] != "&")
 				waitpid(pID, &status, 0);
+			free(charArgs);
+
 		}
 	}
 }
