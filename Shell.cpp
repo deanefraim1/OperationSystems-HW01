@@ -71,7 +71,6 @@ void Shell::MoveJobToFg(vector<Job>::iterator jobIteratorToFg)
         fgJob.status = fgRunning;
     }   
     fgJob = jobToFg;
-    
 }
 
 /// @brief search for a stopped job in the jobs vector with the max job id
