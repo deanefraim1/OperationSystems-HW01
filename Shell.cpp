@@ -88,6 +88,8 @@ int Shell::GetStoppedJobPIDWithMaxJobID()
     return NOT_EXCIST;
 }
 
+/// @brief 
+/// @param job 
 void Shell::InsertJobToFg(Job job)
 {
     if(fgJob.PID != NOT_EXCIST) 
@@ -95,6 +97,7 @@ void Shell::InsertJobToFg(Job job)
     fgJob = job;
 }
 
+/// @brief 
 void Shell::UpdateJobsList()
 {
     for (int i = 0; i < jobs.size(); i++)
