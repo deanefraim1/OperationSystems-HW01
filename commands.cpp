@@ -219,7 +219,7 @@ int ExeCmd(string prompt)
 			}
 		}
 	}
-	else if (cmd == "diff") // TODO: check what those functions acually do???
+	else if (cmd == "diff")
 	{
 		if(num_arg != 2)
 			cout << "smash error: diff: invalid arguments" << endl;
@@ -291,13 +291,13 @@ void ExeExternal(string args[MAX_ARG], string cmd, int num_arg)
 				Job newJob;
 				if (args[num_arg] == "&")
 				{
-					newJob = Job(getpid(), shell->jobs.size() + 1, cmd, bgRunning);
+					newJob = Job(pID, shell->jobs.size() + 1, cmd, bgRunning);
 					shell->InsertJobSorted(newJob);
 				}
 					
 				else
 				{
-					newJob = Job(getpid(), shell->jobs.size() + 1, cmd, fgRunning);
+					newJob = Job(pID, shell->jobs.size() + 1, cmd, fgRunning);
 					shell->InsertJobToFg(newJob);
 				}
 			}
