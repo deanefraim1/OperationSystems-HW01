@@ -45,15 +45,23 @@ int Shell::GetJobIndexByPID(int pid)
 /// @param job the given job to insert the vector
 void Shell::InsertJobSorted(Job job)
 {
-    for (int i = 0; i < jobs.size(); i++)
-	{
+    int i;
+    bool inserted = false;
+    for (i = 0; i < jobs.size(); i++)
+    {
 		if(jobs[i].jobID > job.jobID)
 		{
 			jobs.insert(jobs.begin() + i, job);
-			jobs[i].status = bgRunning;
-			break;
-		}
+            inserted = true;
+            break;
+        }
 	}
+    if(!inserted)
+    {
+        jobs.insert(jobs.begin() + i, job);
+		jobs[i].status = bgRunning;
+        inserted = true;
+    }
 }
 
 /// @brief swap between the fg job and the given job and give the new fg job a runing status and the old fg job a waiting status

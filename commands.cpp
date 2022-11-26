@@ -109,7 +109,7 @@ int ExeCmd(string prompt)
 		shell->UpdateJobsList();
 		for (int i = 0; i < shell->jobs.size(); i++)
 		{
-			cout << "[" << shell->jobs[i].jobID << "] " << shell->jobs[i].command << " : " << shell->jobs[i].PID << " " << shell->jobs[i].getRunningTime() << "secs";
+			cout << "[" << shell->jobs[i].jobID << "] " << shell->jobs[i].command << " : " << shell->jobs[i].PID << " " << shell->jobs[i].getRunningTime() << " secs";
 			if(shell->jobs[i].status == stopped)
 				cout << "(stopped)";
 			cout << endl;
@@ -189,7 +189,7 @@ int ExeCmd(string prompt)
 			{
 				cout << "[" << shell->jobs[i].jobID << "] " << shell->jobs[i].command << " - Sending SIGTERM...";
 				kill(shell->jobs[i].PID, SIGTERM);
-				sleep(5);
+				sleep(5);//TODO: do it faster and dont wait 5 sec in every situatoin
 				if(kill(shell->jobs[i].PID, SIGEXCIST) == EXCIST)
 				{
 					cout << " (5 sec passed) Sending SIGKILL...";
@@ -301,9 +301,8 @@ void ExeExternal(string args[MAX_ARG], string cmd, int num_arg)
 					shell->InsertJobToFg(newJob);
 				}
 			}
-			int status;
 			if(args[num_arg] != "&")
-				waitpid(pID, &status, WUNTRACED);
+				waitpid(pID, NULL, WUNTRACED);
 			free(charArgs);
 		}
 	}

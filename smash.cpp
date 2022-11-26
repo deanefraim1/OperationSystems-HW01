@@ -58,7 +58,7 @@ int main(int argc, char *argv[])
 		/* initialize for next line read*/
 		prompt.clear();
 	}
-	free(shell);
+	delete(shell);
 	return 0;
 }
 
