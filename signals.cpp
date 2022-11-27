@@ -31,6 +31,12 @@ void SignalHandler_ctrZ(int signal)
       } 
       else cerr << "smash error: kill failed" << endl;
    }
+   else
+   {
+      cout << "smash > ";
+      cout.flush(); //TODO: why i need it?
+   }
+      
 }
 
 void SignalHandler_ctrC(int signal)
@@ -44,5 +50,10 @@ void SignalHandler_ctrC(int signal)
          shell->fgJob = Job();
       }  
       else cerr << "smash error: kill failed" << endl;
+   }
+   else
+   {
+      cout << "smash > ";
+      cout.flush(); //TODO: why i need it?
    }
 }
