@@ -111,7 +111,7 @@ int ExeCmd(string prompt)
 		{
 			cout << "[" << shell->jobs[i].jobID << "] " << shell->jobs[i].prompt << " : " << shell->jobs[i].PID << " " << shell->jobs[i].getRunningTime() << " secs"; //TODO: should print the whole command prompt or just the command itdelf?
 			if(shell->jobs[i].status == stopped)
-				cout << "(stopped)";
+				cout << " (stopped)";
 			cout << endl;
 		}
 	}

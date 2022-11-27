@@ -59,7 +59,6 @@ void Shell::InsertJobSorted(Job job)
     if(!inserted)
     {
         jobs.insert(jobs.begin() + i, job);
-		jobs[i].status = bgRunning;
         inserted = true;
     }
 }
