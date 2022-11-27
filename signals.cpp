@@ -29,7 +29,7 @@ void SignalHandler_ctrZ(int signal)
          shell->InsertJobSorted(shell->fgJob);
          shell->fgJob = Job();
       } 
-      else cerr << "smash error: kill failed" << endl;
+      else cerr << "smash error: kill failed" << endl; //TODO: cerr??
    }
    else
    {
@@ -49,7 +49,7 @@ void SignalHandler_ctrC(int signal)
          cout << "smash: process " << shell->fgJob.PID <<  " was killed" << endl;
          shell->fgJob = Job();
       }  
-      else cerr << "smash error: kill failed" << endl;
+      else cerr << "smash error: kill failed" << endl; //TODO: cerr??
    }
    else
    {
