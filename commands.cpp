@@ -142,8 +142,7 @@ int ExeCmd(string prompt)
 			else
 			{
 				shell->MoveJobToFg(shell->jobs.begin() + jobIndexToFg);
-				int status;
-				waitpid(shell->jobs[jobIndexToFg].PID, &status, 0);
+				waitpid(shell->jobs[jobIndexToFg].PID, NULL, WUNTRACED); //TODO - do we need the status??
 			}
 		}
 	}
@@ -302,7 +301,7 @@ void ExeExternal(string args[MAX_ARG], string prompt, string cmd, int num_arg)
 				}
 			}
 			if(args[num_arg] != "&")
-				waitpid(pID, NULL, WUNTRACED);
+				waitpid(pID, NULL, WUNTRACED); //TODO - do we need the status??
 			free(charArgs);
 		}
 	}
