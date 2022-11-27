@@ -98,10 +98,10 @@ int ExeCmd(string prompt)
 	}
 
 	/*************************************************/
-	else if (cmd == "mkdir")
-	{
- 		//No need to impliment.
-	}
+	//else if (cmd == "mkdir")
+	//{
+ 	//	//No need to impliment.
+	//}
 	/*************************************************/
 	
 	else if (cmd == "jobs") 
@@ -109,7 +109,7 @@ int ExeCmd(string prompt)
 		shell->UpdateJobsList();
 		for (int i = 0; i < shell->jobs.size(); i++)
 		{
-			cout << "[" << shell->jobs[i].jobID << "] " << shell->jobs[i].command << " : " << shell->jobs[i].PID << " " << shell->jobs[i].getRunningTime() << " secs"; //TODO: should print the whole command prompt or just the command itdelf?
+			cout << "[" << shell->jobs[i].jobID << "] " << shell->jobs[i].prompt << " : " << shell->jobs[i].PID << " " << shell->jobs[i].getRunningTime() << " secs"; //TODO: should print the whole command prompt or just the command itdelf?
 			if(shell->jobs[i].status == stopped)
 				cout << "(stopped)";
 			cout << endl;
@@ -159,7 +159,7 @@ int ExeCmd(string prompt)
 			{
 				shell->jobs[stoppedJobPIDWithMaxJobID].status = fgRunning;
 				kill(stoppedJobPIDWithMaxJobID, SIGCONT);
-				cout << "[" << shell->jobs[stoppedJobPIDWithMaxJobID].jobID << "] " << shell->jobs[stoppedJobPIDWithMaxJobID].command << " : " << shell->jobs[stoppedJobPIDWithMaxJobID].PID << endl;
+				cout << "[" << shell->jobs[stoppedJobPIDWithMaxJobID].jobID << "] " << shell->jobs[stoppedJobPIDWithMaxJobID].prompt << " : " << shell->jobs[stoppedJobPIDWithMaxJobID].PID << endl;
 			}
 		}
 		else if((num_arg != 1) || (!regex_match(args[1], regex("(\\d)+")))) // more than 1 argument or one argument but not a number
@@ -175,7 +175,7 @@ int ExeCmd(string prompt)
 			{
 				shell->jobs[jobIndexToBg].status = fgRunning;
 				kill(shell->jobs[jobIndexToBg].PID, SIGCONT);
-				cout << "[" << shell->jobs[jobIndexToBg].jobID << "] " << shell->jobs[jobIndexToBg].command << " : " << shell->jobs[jobIndexToBg].PID << endl;
+				cout << "[" << shell->jobs[jobIndexToBg].jobID << "] " << shell->jobs[jobIndexToBg].prompt << " : " << shell->jobs[jobIndexToBg].PID << endl;
 
 			}
 		}
@@ -187,7 +187,7 @@ int ExeCmd(string prompt)
 		{
 			for (int i = 0; i < shell->jobs.size(); i++)
 			{
-				cout << "[" << shell->jobs[i].jobID << "] " << shell->jobs[i].command << " - Sending SIGTERM...";
+				cout << "[" << shell->jobs[i].jobID << "] " << shell->jobs[i].prompt << " - Sending SIGTERM...";
 				kill(shell->jobs[i].PID, SIGTERM);
 				sleep(5);//TODO: do it faster and dont wait 5 sec in every situatoin
 				if(kill(shell->jobs[i].PID, SIGEXCIST) == EXCIST)
@@ -245,7 +245,7 @@ int ExeCmd(string prompt)
 	/*************************************************/
 	else // external command
 	{
- 		ExeExternal(args, cmd, num_arg);
+ 		ExeExternal(args, prompt, cmd, num_arg);
 	 	return 0;
 	}
 	if (illegal_cmd == true)
@@ -261,7 +261,7 @@ int ExeCmd(string prompt)
 // Parameters: external command arguments, external command string
 // Returns: void
 //**************************************************************************************
-void ExeExternal(string args[MAX_ARG], string cmd, int num_arg)
+void ExeExternal(string args[MAX_ARG], string prompt, string cmd, int num_arg)
 {
 	int pID;
 	char **charArgs = InitStringArrayToCharArray(args, num_arg+1); //for the command +1
@@ -291,13 +291,13 @@ void ExeExternal(string args[MAX_ARG], string cmd, int num_arg)
 				Job newJob;
 				if (args[num_arg] == "&")
 				{
-					newJob = Job(pID, shell->jobs.size() + 1, cmd, bgRunning);
+					newJob = Job(pID, shell->jobs.size() + 1, prompt, cmd, bgRunning);
 					shell->InsertJobSorted(newJob);
 				}
 					
 				else
 				{
-					newJob = Job(pID, shell->jobs.size() + 1, cmd, fgRunning);
+					newJob = Job(pID, shell->jobs.size() + 1, prompt, cmd, fgRunning);
 					shell->InsertJobToFg(newJob);
 				}
 			}

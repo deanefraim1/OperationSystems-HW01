@@ -24,6 +24,6 @@ using namespace std;
 int ExeComp(string prompt);
 int ExeCmd(string prompt);
 char **InitStringArrayToCharArray(string stringArray[], int size);
-void ExeExternal(string args[MAX_ARG], string cmd, int num_arg);
+void ExeExternal(string args[MAX_ARG], string prompt, string cmd, int num_arg);
 
 #endif

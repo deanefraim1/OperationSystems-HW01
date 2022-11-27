@@ -25,11 +25,12 @@ public:
     jobStatus status;
     int PID;
     int jobID;
+    string prompt;
     string command;
     time_t timeStamp;
 
     Job();
-    Job(int PID, int jobID, string command, jobStatus status);
+    Job(int PID, int jobID, string prompt, string command, jobStatus status);
     double getRunningTime();
 };
 

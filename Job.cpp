@@ -10,15 +10,17 @@ Job::Job()
 {
     this->PID = EMPTY;
     this->jobID = EMPTY;
+    this->prompt = "";
     this->command = "";
     this->status = bgRunning;
     this->timeStamp = EMPTY;
 }
 
-Job::Job(int PID, int jobID, string command, jobStatus status)
+Job::Job(int PID, int jobID, string prompt, string command, jobStatus status)
 {
     this->PID = PID;
     this->jobID = jobID;
+    this->prompt = prompt;
     this->command = command;
     this->status = status;
     time(&(this->timeStamp));
