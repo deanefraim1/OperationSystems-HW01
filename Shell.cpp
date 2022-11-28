@@ -101,3 +101,11 @@ void Shell::UpdateJobsList()
             jobs.erase(jobs.begin() + i);
     }
 }
+
+int Shell::GetNextJobID()
+{
+    if(jobs.size() > 0)
+        return jobs.end().base()->jobID + 1;
+    else
+        return 1;
+}

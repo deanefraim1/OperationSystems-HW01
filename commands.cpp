@@ -130,7 +130,7 @@ int ExeCmd(string prompt)
 			else
 			{
 				shell->MoveJobToFg(shell->jobs.end());
-				waitpid(shell->jobs.end()->PID, NULL, WUNTRACED);
+				waitpid(shell->fgJob.PID, NULL, WUNTRACED);
 			}
 				
 		}
@@ -292,15 +292,11 @@ void ExeExternal(string args[MAX_ARG], string prompt, string cmd, int num_arg)
 			{
 				Job newJob;
 				if (args[num_arg] == "&")
-				{
-					newJob = Job(pID, shell->jobs.size() + 1, prompt, cmd, bgRunning);
-					shell->InsertJobSorted(newJob);
-				}
+					shell->InsertJobSorted(Job(pID, shell->GetNextJobID(), prompt, cmd, bgRunning));
 					
 				else
 				{
-					newJob = Job(pID, shell->jobs.size() + 1, prompt, cmd, fgRunning);
-					shell->fgJob = newJob;
+					shell->fgJob = Job(pID, shell->GetNextJobID(), prompt, cmd, fgRunning);
 					waitpid(pID, NULL, WUNTRACED); //TODO - do we need the status??
 				}
 			}	 

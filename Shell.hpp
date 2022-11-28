@@ -41,6 +41,8 @@ public:
 
     /// @brief updates the job list according to which one is done via sigexcist
     void UpdateJobsList();
+
+    int GetNextJobID();
 };
 
 #endif
