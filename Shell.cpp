@@ -105,7 +105,7 @@ void Shell::UpdateJobsList()
 int Shell::GetNextJobID()
 {
     if(jobs.size() > 0)
-        return jobs.end().base()->jobID + 1;
+        return (jobs.end()-1).base()->jobID + 1;
     else
         return 1;
 }

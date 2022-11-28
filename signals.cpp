@@ -33,7 +33,6 @@ void SignalHandler_ctrZ(int signal)
    }
    else
       cout << "smash > " << flush; //TODO - DO WE NEED THIS?
-      
 }
 
 void SignalHandler_ctrC(int signal)

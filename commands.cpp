@@ -129,7 +129,7 @@ int ExeCmd(string prompt)
 				cout << "smash error: fg: jobs list is empty" << endl; //TODO: cerr??
 			else
 			{
-				shell->MoveJobToFg(shell->jobs.end());
+				shell->MoveJobToFg(shell->jobs.end()-1);
 				waitpid(shell->fgJob.PID, NULL, WUNTRACED);
 			}
 				
