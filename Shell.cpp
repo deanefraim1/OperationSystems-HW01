@@ -70,16 +70,13 @@ void Shell::MoveJobToFg(vector<Job>::iterator jobIteratorToFg)
     Job jobToFg = *jobIteratorToFg.base();
     jobs.erase(jobIteratorToFg);
 
-    if(fgJob.jobID != NOT_EXCIST)
-        InsertJobSorted(fgJob);
-
     if(jobToFg.status == stopped)
     {
         time_t currentTime;
         time(&currentTime);
         jobToFg.timeStamp = currentTime - jobToFg.timeStamp; //timeStamo equals to runTime so far (for stopped jobs)
-        jobToFg.status = fgRunning;
     }   
+    jobToFg.status = fgRunning;
     fgJob = jobToFg;
 }
 
