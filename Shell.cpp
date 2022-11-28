@@ -78,7 +78,7 @@ void Shell::MoveJobToFg(vector<Job>::iterator jobIteratorToFg)
         time_t currentTime;
         time(&currentTime);
         jobToFg.timeStamp = currentTime - jobToFg.timeStamp; //timeStamo equals to runTime so far (for stopped jobs)
-        fgJob.status = fgRunning;
+        jobToFg.status = fgRunning;
     }   
     fgJob = jobToFg;
 }

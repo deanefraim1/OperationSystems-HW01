@@ -127,8 +127,12 @@ int ExeCmd(string prompt)
 		{
 			if(shell->jobs.empty())
 				cout << "smash error: fg: jobs list is empty" << endl; //TODO: cerr??
-			else 
+			else
+			{
 				shell->MoveJobToFg(shell->jobs.end());
+				waitpid(shell->jobs.end()->PID, NULL, WUNTRACED);
+			}
+				
 		}
 			
 		else if((num_arg != 1) || (!regex_match(args[1], regex("(\\d)+"))))
@@ -142,7 +146,7 @@ int ExeCmd(string prompt)
 			else
 			{
 				shell->MoveJobToFg(shell->jobs.begin() + jobIndexToFg);
-				waitpid(shell->jobs[jobIndexToFg].PID, NULL, WUNTRACED); //TODO - do we need the status??
+				waitpid(shell->fgJob.PID, NULL, WUNTRACED); //TODO - do we need the status??
 			}
 		}
 	}
@@ -297,10 +301,9 @@ void ExeExternal(string args[MAX_ARG], string prompt, string cmd, int num_arg)
 				{
 					newJob = Job(pID, shell->jobs.size() + 1, prompt, cmd, fgRunning);
 					shell->fgJob = newJob;
+					waitpid(pID, NULL, WUNTRACED); //TODO - do we need the status??
 				}
-			}
-			if(args[num_arg] != "&")
-				waitpid(pID, NULL, WUNTRACED); //TODO - do we need the status??
+			}	 
 			free(charArgs);
 		}
 	}
