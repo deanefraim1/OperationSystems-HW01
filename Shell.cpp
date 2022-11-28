@@ -70,7 +70,7 @@ void Shell::MoveJobToFg(vector<Job>::iterator jobIteratorToFg)
     Job jobToFg = *jobIteratorToFg.base();
     jobs.erase(jobIteratorToFg);
 
-    if(fgJob.jobID != EMPTY)
+    if(fgJob.jobID != NOT_EXCIST)
         InsertJobSorted(fgJob);
 
     if(jobToFg.status == stopped)
@@ -95,16 +95,7 @@ int Shell::GetStoppedJobPIDWithMaxJobID()
     return NOT_EXCIST;
 }
 
-/// @brief 
-/// @param job 
-void Shell::InsertJobToFg(Job job)
-{
-    if(fgJob.PID != NOT_EXCIST) 
-        InsertJobSorted(fgJob);
-    fgJob = job;
-}
-
-/// @brief 
+/// @brief updates the job list according to which one is done via sigexcist
 void Shell::UpdateJobsList()
 {
     for (int i = 0; i < jobs.size(); i++)

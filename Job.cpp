@@ -8,12 +8,12 @@ using namespace std;
 
 Job::Job()
 {
-    this->PID = EMPTY;
-    this->jobID = EMPTY;
+    this->PID = NOT_EXCIST;
+    this->jobID = NOT_EXCIST;
     this->prompt = "";
     this->command = "";
     this->status = bgRunning;
-    this->timeStamp = EMPTY;
+    this->timeStamp = NOT_EXCIST;
 }
 
 Job::Job(int PID, int jobID, string prompt, string command, jobStatus status)
@@ -26,11 +26,13 @@ Job::Job(int PID, int jobID, string prompt, string command, jobStatus status)
     time(&(this->timeStamp));
 }
 
+/// @brief calc the running time of "this".
+/// @return returns the running time
 double Job::getRunningTime()
 {
-    if(status == stopped)
+    if(status == stopped) // if the job is stopped, its running time is its timeStamp
         return timeStamp;
-    else //running
+    else // the job is still running so clac the running time as of this moment.
     {
         time_t start = this->timeStamp;
         time_t end;

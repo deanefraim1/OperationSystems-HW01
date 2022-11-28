@@ -17,7 +17,7 @@ extern Shell *shell;
 void SignalHandler_ctrZ(int signal)
 {
    cout << "smash: caught ctrl-Z" << endl;
-   if(shell->fgJob.PID != EMPTY)
+   if(shell->fgJob.PID != NOT_EXCIST)
    {
       if(kill(shell->fgJob.PID, SIGSTOP) == 0)
       {
@@ -39,7 +39,7 @@ void SignalHandler_ctrZ(int signal)
 void SignalHandler_ctrC(int signal)
 {
    cout << "smash: caught ctrl-C" << endl;
-   if(shell->fgJob.PID != EMPTY)
+   if(shell->fgJob.PID != NOT_EXCIST)
    {
       if(kill(shell->fgJob.PID, SIGKILL) == 0)
       {

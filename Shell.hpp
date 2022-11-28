@@ -39,11 +39,7 @@ public:
     /// @return the index of the job if excist or -1 if no stopped job in the job vector
     int GetStoppedJobPIDWithMaxJobID();
 
-    /// @brief 
-    /// @param job 
-    void InsertJobToFg(Job job);
-
-    /// @brief 
+    /// @brief updates the job list according to which one is done via sigexcist
     void UpdateJobsList();
 };
 

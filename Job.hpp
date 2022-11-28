@@ -8,7 +8,7 @@
 #include <string>
 #include <csignal>
 
-#define EMPTY -1
+#define NOT_EXCIST -1
 
 using namespace std;
 

@@ -33,7 +33,7 @@ int ExeCmd(string prompt)
 	char *tmp = strtok(strdup(prompt.c_str()), strdup(delimiters.c_str()));
 	if(tmp != NULL)
 		cmd = tmp;
-	if(cmd.empty()) return 0; //TODO: or null returned from strtok???
+	if(cmd.empty()) return 0;
 	args[0] = cmd;
 	for (int i = 1; i < MAX_ARG; i++)
 	{
@@ -188,8 +188,7 @@ int ExeCmd(string prompt)
 			{
 				cout << "[" << shell->jobs[i].jobID << "] " << shell->jobs[i].prompt << " - Sending SIGTERM...";
 				kill(shell->jobs[i].PID, SIGTERM);
-				sleep(5);//TODO: do it faster and dont wait 5 sec in every situatoin
-				if(kill(shell->jobs[i].PID, SIGEXCIST) == EXCIST)
+				if(!waitUntilTerminated(shell->jobs[i].PID, 5, 0.1))
 				{
 					cout << " (5 sec passed) Sending SIGKILL...";
 					kill(shell->jobs[i].PID, SIGKILL);
@@ -297,7 +296,7 @@ void ExeExternal(string args[MAX_ARG], string prompt, string cmd, int num_arg)
 				else
 				{
 					newJob = Job(pID, shell->jobs.size() + 1, prompt, cmd, fgRunning);
-					shell->InsertJobToFg(newJob);
+					shell->fgJob = newJob;
 				}
 			}
 			if(args[num_arg] != "&")
@@ -333,6 +332,10 @@ int ExeComp(string prompt)
 	return -1;
 }
 
+/// @brief initilize (with malloc!) an array of char* from array of cpp strings.
+/// @param stringArray 
+/// @param size 
+/// @return the place of the char* array.
 char **InitStringArrayToCharArray(string stringArray[], int size)
 {
 	char **charArray = (char**)malloc(sizeof(char *) * size);
@@ -345,4 +348,21 @@ char **InitStringArrayToCharArray(string stringArray[], int size)
 	else 
 		charArray[size] = NULL;
 	return charArray;
+}
+
+/// @brief check if the given pid excist every checkIntervals for maxTimeToWait
+/// @param pIDToKill 
+/// @param maxTimeToWait 
+/// @param checkIntervals 
+/// @return true if the pid is killed, false if maxTimeToWait arrived and the pid is still alive.
+bool waitUntilTerminated(pid_t pIDToKill, double maxTimeToWait, double checkIntervals)
+{
+	while(maxTimeToWait > 0)
+	{
+		sleep(checkIntervals);
+		if(kill(pIDToKill, SIGEXCIST) != EXCIST)
+			return true;
+		maxTimeToWait -= checkIntervals;
+	}
+	return false;
 }
