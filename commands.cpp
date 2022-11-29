@@ -126,17 +126,17 @@ int ExeCmd(string prompt)
 			else
 			{
 				int jobIndexToFg = shell->jobs.size()-1;
+				Job& jobToFg = shell->jobs[jobIndexToFg];
 
-				if ((shell->jobs[jobIndexToFg].status == stopped) && (kill(shell->jobs[jobIndexToFg].PID, SIGCONT) != SUCCESS)) // the job is stopeed and kill failed to continue the pid
+				if ((jobToFg.status == stopped) && (kill(jobToFg.PID, SIGCONT) != SUCCESS)) // the job is stopeed and kill failed to continue the pid
 					cerr << "smash error: kill failed" << endl;
 
 				else
 				{
 					shell->MoveJobToFg(jobIndexToFg);
-					waitpid(shell->fgJob.PID, NULL, WUNTRACED);
+					waitpid(jobToFg.PID, NULL, WUNTRACED);
 				}	
 			}
-				
 		}
 			
 		else if((num_arg != 1) || (!regex_match(args[1], regex("(\\d)+"))))
@@ -150,13 +150,18 @@ int ExeCmd(string prompt)
 			if(jobIndexToFg == NOT_EXCIST)
 				cout << "smash error: fg: job-id " << jobIDToFg << " does not exist " << endl; //TODO: cerr??
 
-			else if ((shell->jobs[jobIndexToFg].status == stopped) && (kill(shell->jobs[jobIndexToFg].PID, SIGCONT) != SUCCESS)) // the job is stopeed and kill failed to continue the pid
-				cerr << "smash error: kill failed" << endl;
-
 			else
 			{
-				shell->MoveJobToFg(jobIndexToFg);
-				waitpid(shell->fgJob.PID, NULL, WUNTRACED); //TODO - do we need the status??
+				Job& jobToFg = shell->jobs[jobIndexToFg];
+
+				if ((jobToFg.status == stopped) && (kill(jobToFg.PID, SIGCONT) != SUCCESS)) // the job is stopeed and kill failed to continue the pid
+					cerr << "smash error: kill failed" << endl;
+
+				else
+				{
+					shell->MoveJobToFg(jobIndexToFg);
+					waitpid(shell->fgJob.PID, NULL, WUNTRACED); //TODO - do we need the status??
+				} 
 			} 
 		}
 	}
@@ -165,17 +170,25 @@ int ExeCmd(string prompt)
 	{
   		if(num_arg == 0) //no argument => find the stopped job with maximum job id
 		{
-			int stoppedJobPIDWithMaxJobID = shell->GetStoppedJobPIDWithMaxJobID();
+			int stoppedJobIndexWithMaxJobID = shell->GetStoppedJobIndexWithMaxJobID();
 
-			if (stoppedJobPIDWithMaxJobID == NOT_EXCIST)
+			if (stoppedJobIndexWithMaxJobID == NOT_EXCIST)
 				cout << "smash error: bg: there are no stopped jobs to resume" << endl; //TODO: cerr??
 
 			else
 			{
-				shell->jobs[stoppedJobPIDWithMaxJobID].status = fgRunning;
-				kill(stoppedJobPIDWithMaxJobID, SIGCONT);
-				cout << "[" << shell->jobs[stoppedJobPIDWithMaxJobID].jobID << "] " << shell->jobs[stoppedJobPIDWithMaxJobID].prompt << " : " << shell->jobs[stoppedJobPIDWithMaxJobID].PID << endl;
-			}
+				Job &jobToBg = shell->jobs[stoppedJobIndexWithMaxJobID];
+				if (kill(jobToBg.PID, SIGCONT) != SUCCESS)
+					cerr << "smash error: kill failed" << endl;
+				else
+				{
+					time_t currentTime;
+					time(&currentTime);
+					jobToBg.timeStamp = difftime(currentTime, jobToBg.timeStamp);
+					jobToBg.status = fgRunning;
+					cout << "[" << jobToBg.jobID << "] " << jobToBg.prompt << " : " << jobToBg.PID << endl;
+				}
+			} 
 		}
 
 		else if((num_arg != 1) || (!regex_match(args[1], regex("(\\d)+")))) // more than 1 argument or one argument but not a number
@@ -188,15 +201,26 @@ int ExeCmd(string prompt)
 			if (jobIndexToBg == NOT_EXCIST)
 				cout << "smash error: bg: job-id " << args[1] << " does not exist" << endl; //TODO: cerr??
 
-			else if(shell->jobs[jobIndexToBg].status != stopped) // the given job is not stopped
-				cout << "smash error: bg: job-id " << args[1] << " is already running in the background" << endl; //TODO: cerr??
-
 			else
 			{
-				shell->jobs[jobIndexToBg].status = fgRunning;
-				kill(shell->jobs[jobIndexToBg].PID, SIGCONT);
-				cout << "[" << shell->jobs[jobIndexToBg].jobID << "] " << shell->jobs[jobIndexToBg].prompt << " : " << shell->jobs[jobIndexToBg].PID << endl;
-			}
+				Job& jobToBg = shell->jobs[jobIndexToBg];
+				if(jobToBg.status != stopped) // the given job is not stopped
+				cout << "smash error: bg: job-id " << args[1] << " is already running in the background" << endl; //TODO: cerr??
+
+				else if(kill(jobToBg.PID, SIGCONT) != SUCCESS)
+					cerr << "smash error: kill failed" << endl;
+
+				else
+				{
+					time_t currentTime;
+					time(&currentTime);
+					jobToBg.timeStamp = difftime(currentTime, jobToBg.timeStamp);
+					jobToBg.status = fgRunning;
+					cout << "[" << jobToBg.jobID << "] " << jobToBg.prompt << " : " << jobToBg.PID << endl;
+				}
+					
+				
+			} 
 		}
 	}
 	/*************************************************/

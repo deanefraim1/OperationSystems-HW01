@@ -37,7 +37,7 @@ public:
 
     /// @brief search for a stopped job in the jobs vector with the max job id
     /// @return the index of the job if excist or -1 if no stopped job in the job vector
-    int GetStoppedJobPIDWithMaxJobID();
+    int GetStoppedJobIndexWithMaxJobID();
 
     /// @brief updates the job list according to which one is done via sigexcist
     void UpdateJobsList();
