@@ -4,6 +4,9 @@
 #include "Job.hpp"
 #include <string>
 
+#define SIGEXCIST 0
+#define EXCIST 0
+
 using namespace std;
 
 Job::Job()
@@ -39,6 +42,22 @@ double Job::getRunningTime()
         time(&end);
         return difftime(end, start);
     }
+}
+
+/// @brief check if the job excist every checkIntervals for maxTimeToWait
+/// @param maxTimeToWait 
+/// @param checkIntervals 
+/// @return true if the pid is killed, false if maxTimeToWait arrived and the pid is still alive.
+bool Job::waitUntilTerminated(double maxTimeToWait, double checkIntervals)
+{
+	while(maxTimeToWait > 0)
+	{
+		sleep(checkIntervals);
+		if(kill(PID, SIGEXCIST) != EXCIST)
+			return true;
+		maxTimeToWait -= checkIntervals;
+	}
+	return false;
 }
 
 #endif

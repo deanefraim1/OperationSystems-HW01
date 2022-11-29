@@ -33,7 +33,7 @@ public:
 
     /// @brief swap between the fg job and the given job and give the new fg job a runing status and the old fg job a waiting status
     /// @param jobIteratorToFg 
-    void MoveJobToFg(vector<Job>::iterator jobIteratorToFg);
+    void MoveJobToFg(int jobIndexToFg);
 
     /// @brief search for a stopped job in the jobs vector with the max job id
     /// @return the index of the job if excist or -1 if no stopped job in the job vector
@@ -42,7 +42,18 @@ public:
     /// @brief updates the job list according to which one is done via sigexcist
     void UpdateJobsList();
 
+    /// @brief find job with highest job id, and calc the next job id to enter the jobs vector
+    /// @return the highest job id excist +1
     int GetNextJobID();
+
+    /// @brief print all jobs in the following format "[<job-id>] <prompt> : <jobPid> <jobRunningTime> secs" and add "(stopped)" at the end if the job is stopped
+    void PrintAllJobsInfo();
+
+    /// @brief prints the shell PID
+    void PrintShellPID();
+
+    /// @brief kills all jobs excists and if SIGTERM fails, it sends SIGKILL
+    void KillAllJobs();
 };
 
 #endif

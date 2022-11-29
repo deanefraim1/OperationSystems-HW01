@@ -11,6 +11,7 @@
 
 #define SIGEXCIST 0
 #define EXCIST 0
+#define SUCCESS 0
 
 using namespace std;
 
@@ -107,18 +108,12 @@ int ExeCmd(string prompt)
 	else if (cmd == "jobs") 
 	{
 		shell->UpdateJobsList();
-		for (int i = 0; i < shell->jobs.size(); i++)
-		{
-			cout << "[" << shell->jobs[i].jobID << "] " << shell->jobs[i].prompt << " : " << shell->jobs[i].PID << " " << shell->jobs[i].getRunningTime() << " secs"; //TODO: should print the whole command prompt or just the command itdelf?
-			if(shell->jobs[i].status == stopped)
-				cout << " (stopped)";
-			cout << endl;
-		}
+		shell->PrintAllJobsInfo();
 	}
 	/*************************************************/
 	else if (cmd == "showpid") 
 	{
-		cout << "smash pid is " << getpid() << endl;
+		shell->PrintShellPID();
 	}
 	/*************************************************/
 	else if (cmd == "fg") 
@@ -127,27 +122,42 @@ int ExeCmd(string prompt)
 		{
 			if(shell->jobs.empty())
 				cout << "smash error: fg: jobs list is empty" << endl; //TODO: cerr??
+
 			else
 			{
-				shell->MoveJobToFg(shell->jobs.end()-1);
-				waitpid(shell->fgJob.PID, NULL, WUNTRACED);
+				int jobIndexToFg = shell->jobs.size()-1;
+
+				if ((shell->jobs[jobIndexToFg].status == stopped) && (kill(shell->jobs[jobIndexToFg].PID, SIGCONT) != SUCCESS)) // the job is stopeed and kill failed to continue the pid
+					cerr << "smash error: kill failed" << endl;
+
+				else
+				{
+					shell->MoveJobToFg(jobIndexToFg);
+					waitpid(shell->fgJob.PID, NULL, WUNTRACED);
+				}	
 			}
 				
 		}
 			
 		else if((num_arg != 1) || (!regex_match(args[1], regex("(\\d)+"))))
 			cout << "smash error: fg: invalid arguments" << endl; //TODO: cerr??
+
 		else
 		{
 			int jobIDToFg = atoi(args[1].c_str());
 			int jobIndexToFg = shell->GetJobIndexByJobID(jobIDToFg);
+
 			if(jobIndexToFg == NOT_EXCIST)
 				cout << "smash error: fg: job-id " << jobIDToFg << " does not exist " << endl; //TODO: cerr??
+
+			else if ((shell->jobs[jobIndexToFg].status == stopped) && (kill(shell->jobs[jobIndexToFg].PID, SIGCONT) != SUCCESS)) // the job is stopeed and kill failed to continue the pid
+				cerr << "smash error: kill failed" << endl;
+
 			else
 			{
-				shell->MoveJobToFg(shell->jobs.begin() + jobIndexToFg);
+				shell->MoveJobToFg(jobIndexToFg);
 				waitpid(shell->fgJob.PID, NULL, WUNTRACED); //TODO - do we need the status??
-			}
+			} 
 		}
 	}
 	/*************************************************/
@@ -156,8 +166,10 @@ int ExeCmd(string prompt)
   		if(num_arg == 0) //no argument => find the stopped job with maximum job id
 		{
 			int stoppedJobPIDWithMaxJobID = shell->GetStoppedJobPIDWithMaxJobID();
+
 			if (stoppedJobPIDWithMaxJobID == NOT_EXCIST)
 				cout << "smash error: bg: there are no stopped jobs to resume" << endl; //TODO: cerr??
+
 			else
 			{
 				shell->jobs[stoppedJobPIDWithMaxJobID].status = fgRunning;
@@ -165,21 +177,25 @@ int ExeCmd(string prompt)
 				cout << "[" << shell->jobs[stoppedJobPIDWithMaxJobID].jobID << "] " << shell->jobs[stoppedJobPIDWithMaxJobID].prompt << " : " << shell->jobs[stoppedJobPIDWithMaxJobID].PID << endl;
 			}
 		}
+
 		else if((num_arg != 1) || (!regex_match(args[1], regex("(\\d)+")))) // more than 1 argument or one argument but not a number
 			cout << "smash error: bg: invalid arguments" << endl; //TODO: cerr??
+
 		else
 		{
 			int jobIndexToBg = shell->GetJobIndexByJobID(atoi(args[1].c_str()));
+
 			if (jobIndexToBg == NOT_EXCIST)
 				cout << "smash error: bg: job-id " << args[1] << " does not exist" << endl; //TODO: cerr??
+
 			else if(shell->jobs[jobIndexToBg].status != stopped) // the given job is not stopped
 				cout << "smash error: bg: job-id " << args[1] << " is already running in the background" << endl; //TODO: cerr??
+
 			else
 			{
 				shell->jobs[jobIndexToBg].status = fgRunning;
 				kill(shell->jobs[jobIndexToBg].PID, SIGCONT);
 				cout << "[" << shell->jobs[jobIndexToBg].jobID << "] " << shell->jobs[jobIndexToBg].prompt << " : " << shell->jobs[jobIndexToBg].PID << endl;
-
 			}
 		}
 	}
@@ -187,19 +203,7 @@ int ExeCmd(string prompt)
 	else if (cmd == "quit")
 	{
 		if(args[1] == "kill") //kill all jobs befor quit the shell
-		{
-			for (int i = 0; i < shell->jobs.size(); i++)
-			{
-				cout << "[" << shell->jobs[i].jobID << "] " << shell->jobs[i].prompt << " - Sending SIGTERM...";
-				kill(shell->jobs[i].PID, SIGTERM);
-				if(!waitUntilTerminated(shell->jobs[i].PID, 5, 0.1))
-				{
-					cout << " (5 sec passed) Sending SIGKILL...";
-					kill(shell->jobs[i].PID, SIGKILL);
-				}
-				cout << " Done." << endl;
-			}
-		}
+			shell->KillAllJobs();
 		free(shell);
 		exit(0);
 	}
@@ -347,21 +351,4 @@ char **InitStringArrayToCharArray(string stringArray[], int size)
 	else 
 		charArray[size] = NULL;
 	return charArray;
-}
-
-/// @brief check if the given pid excist every checkIntervals for maxTimeToWait
-/// @param pIDToKill 
-/// @param maxTimeToWait 
-/// @param checkIntervals 
-/// @return true if the pid is killed, false if maxTimeToWait arrived and the pid is still alive.
-bool waitUntilTerminated(pid_t pIDToKill, double maxTimeToWait, double checkIntervals)
-{
-	while(maxTimeToWait > 0)
-	{
-		sleep(checkIntervals);
-		if(kill(pIDToKill, SIGEXCIST) != EXCIST)
-			return true;
-		maxTimeToWait -= checkIntervals;
-	}
-	return false;
 }

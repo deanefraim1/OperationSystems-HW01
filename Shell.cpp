@@ -1,12 +1,14 @@
 #include "Shell.hpp"
 #include "Job.hpp"
 #include <vector>
+#include <iostream>
 
 #define NOT_EXCIST -1
 #define MAX_LINE_SIZE 80
 #define SIGEXCIST 0
 #define EXCIST 0
 
+using namespace std;
 
 Shell::Shell()
 {
@@ -15,9 +17,6 @@ Shell::Shell()
     pwd = buffer;
 }
 
-/// @brief search for a job with a given job id in the jobs vector of the shell
-/// @param id the wanted job id
-/// @return the index of the wanted job in the vector or -1 if not excist.
 int Shell::GetJobIndexByJobID(int id)
 {
     for (int i = 0; i < jobs.size(); i++)
@@ -28,9 +27,6 @@ int Shell::GetJobIndexByJobID(int id)
     return NOT_EXCIST;
 }
 
-/// @brief search for a job with a given job id in the jobs vector of the shell
-/// @param pid the wanted job pid
-/// @return the index of the wanted job in the vector or -1 if not excist.
 int Shell::GetJobIndexByPID(int pid)
 {
     for (int i = 0; i < jobs.size(); i++)
@@ -41,8 +37,6 @@ int Shell::GetJobIndexByPID(int pid)
     return NOT_EXCIST;
 }
 
-/// @brief insert the given job to the jobs vector in a sorted order by the job id and gives it a waiting status
-/// @param job the given job to insert the vector
 void Shell::InsertJobSorted(Job job)
 {
     int i;
@@ -63,11 +57,10 @@ void Shell::InsertJobSorted(Job job)
     }
 }
 
-/// @brief swap between the fg job and the given job and give the new fg job a runing status and the old fg job a waiting status
-/// @param jobIteratorToFg 
-void Shell::MoveJobToFg(vector<Job>::iterator jobIteratorToFg)
+void Shell::MoveJobToFg(int jobIndexToFg)
 {
-    Job jobToFg = *jobIteratorToFg.base();
+    Job jobToFg = jobs[jobIndexToFg];
+    vector<Job>::iterator jobIteratorToFg = jobs.begin() + jobIndexToFg;
     jobs.erase(jobIteratorToFg);
 
     if(jobToFg.status == stopped)
@@ -80,8 +73,6 @@ void Shell::MoveJobToFg(vector<Job>::iterator jobIteratorToFg)
     fgJob = jobToFg;
 }
 
-/// @brief search for a stopped job in the jobs vector with the max job id
-/// @return the index of the job if excist or -1 if no stopped job in the job vector
 int Shell::GetStoppedJobPIDWithMaxJobID()
 {
     for (int i = jobs.size()-1; i >= 0; i++)
@@ -92,7 +83,6 @@ int Shell::GetStoppedJobPIDWithMaxJobID()
     return NOT_EXCIST;
 }
 
-/// @brief updates the job list according to which one is done via sigexcist
 void Shell::UpdateJobsList()
 {
     for (int i = 0; i < jobs.size(); i++)
@@ -108,4 +98,35 @@ int Shell::GetNextJobID()
         return (jobs.end()-1).base()->jobID + 1;
     else
         return 1;
+}
+
+void Shell::PrintAllJobsInfo()
+{
+    for (int i = 0; i < jobs.size(); i++)
+	{
+		cout << "[" << jobs[i].jobID << "] " << jobs[i].prompt << " : " << jobs[i].PID << " " << jobs[i].getRunningTime() << " secs"; //TODO: should print the whole command prompt or just the command itdelf?
+		if(jobs[i].status == stopped)
+			cout << " (stopped)";
+		cout << endl;
+	}
+}
+
+void Shell::PrintShellPID()
+{
+    cout << "smash pid is " << getpid() << endl;
+}
+
+void Shell::KillAllJobs()
+{
+    for (int i = 0; i < jobs.size(); i++)
+	{
+		cout << "[" << jobs[i].jobID << "] " << jobs[i].prompt << " - Sending SIGTERM...";
+		kill(jobs[i].PID, SIGTERM);
+		if(!jobs[i].waitUntilTerminated(5, 0.1))
+		{
+			cout << " (5 sec passed) Sending SIGKILL...";
+			kill(jobs[i].PID, SIGKILL);
+		}
+		cout << " Done." << endl;
+	}
 }

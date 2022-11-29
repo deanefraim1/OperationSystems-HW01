@@ -32,6 +32,7 @@ public:
     Job();
     Job(int PID, int jobID, string prompt, string command, jobStatus status);
     double getRunningTime();
+    bool waitUntilTerminated(double maxTimeToWait, double checkIntervals);
 };
 
 #endif

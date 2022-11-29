@@ -8,8 +8,13 @@
 #include <string>
 #include <csignal>
 
-void SignalHandler_ctrZ(int signal); //SIGSTOP
-void SignalHandler_ctrC(int signal); //SIGKILL
+/// @brief signal handler function for ctrl-z pressed. stops the job it was sent to
+/// @param signal the signal that was sent to the shell (SIGSTOP)
+void SignalHandler_ctrZ(int signal);
+
+/// @brief signal handler function for ctrl-c pressed. kill the job it was sent to
+/// @param signal the signal that was sent to the shell (SIGKILL)
+void SignalHandler_ctrC(int signal);
 
 #endif
 
