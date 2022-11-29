@@ -73,12 +73,12 @@ void Shell::MoveJobToFg(int jobIndexToFg)
     fgJob = jobToFg;
 }
 
-int Shell::GetStoppedJobPIDWithMaxJobID()
+int Shell::GetStoppedJobIndexWithMaxJobID()
 {
     for (int i = jobs.size()-1; i >= 0; i++)
     {
         if(jobs[i].status == stopped)
-            return jobs[i].PID;
+            return i;
     }
     return NOT_EXCIST;
 }
