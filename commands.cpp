@@ -268,7 +268,7 @@ int ExeCmd(string prompt)
 				bool isEqual = equal(istreambuf_iterator<char>(file1.rdbuf()),
 									 istreambuf_iterator<char>(),
 									 istreambuf_iterator<char>(file2.rdbuf()));
-				cout << isEqual << endl;
+				cout << !isEqual << endl;
 			}
 		}
 	}
