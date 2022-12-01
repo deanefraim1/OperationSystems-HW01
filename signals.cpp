@@ -31,8 +31,8 @@ void SignalHandler_ctrZ(int signal)
       } 
       else cerr << "smash error: kill failed" << endl; //TODO: cerr??
    }
-   else
-      cout << "smash > " << flush; //TODO - DO WE NEED THIS?
+   //else
+   //   cout << "smash > " << flush; //NOTE -  make the shell more user friendly
 }
 
 void SignalHandler_ctrC(int signal)
@@ -47,6 +47,6 @@ void SignalHandler_ctrC(int signal)
       }  
       else cerr << "smash error: kill failed" << endl; //TODO: cerr??
    }
-   else
-      cout << "smash > " << flush; //TODO - DO WE NEED THIS?
+   //else
+   //   cout << "smash > " << flush; //NOTE -  make the shell more user friendly
 }
