@@ -135,6 +135,7 @@ int ExeCmd(string prompt)
 				{
 					shell->MoveJobToFg(jobIndexToFg);
 					waitpid(jobToFg.PID, NULL, WUNTRACED);
+					shell->fgJob = Job();
 				}	
 			}
 		}
@@ -161,6 +162,7 @@ int ExeCmd(string prompt)
 				{
 					shell->MoveJobToFg(jobIndexToFg);
 					waitpid(shell->fgJob.PID, NULL, WUNTRACED); //TODO - do we need the status??
+					shell->fgJob = Job();
 				} 
 			} 
 		}
@@ -326,6 +328,7 @@ void ExeExternal(string args[MAX_ARG], string prompt, string cmd, int num_arg)
 				{
 					shell->fgJob = Job(pID, shell->GetNextJobID(), prompt, cmd, fgRunning);
 					waitpid(pID, NULL, WUNTRACED); //TODO - do we need the status??
+					shell->fgJob = Job();
 				}
 			}	 
 			free(charArgs);
