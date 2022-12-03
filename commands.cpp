@@ -117,6 +117,7 @@ int ExeCmd(string prompt)
 	/*************************************************/
 	else if (cmd == "fg") 
 	{
+		shell->UpdateJobsList();
 		if (num_arg == 0)
 		{
 			if(shell->jobs.empty())
@@ -169,7 +170,8 @@ int ExeCmd(string prompt)
 	/*************************************************/
 	else if (cmd == "bg") 
 	{
-  		if(num_arg == 0) //no argument => find the stopped job with maximum job id
+		shell->UpdateJobsList();
+		if (num_arg == 0) // no argument => find the stopped job with maximum job id
 		{
 			int stoppedJobIndexWithMaxJobID = shell->GetStoppedJobIndexWithMaxJobID();
 
@@ -227,7 +229,8 @@ int ExeCmd(string prompt)
 	/*************************************************/
 	else if (cmd == "quit")
 	{
-		if(args[1] == "kill") //kill all jobs befor quit the shell
+		shell->UpdateJobsList();
+		if (args[1] == "kill") // kill all jobs befor quit the shell
 			shell->KillAllJobs();
 		free(shell);
 		exit(0);
@@ -242,11 +245,11 @@ int ExeCmd(string prompt)
 			int jobID = atoi(args[2].c_str());
 			int jobIndexToKill = shell->GetJobIndexByJobID(jobID);
 			if(jobIndexToKill == NOT_EXCIST)
-				cout << "smash error: kill: job-id <" << jobID << "> does not exist" << endl;
+				cout << "smash error: kill: job-id " << jobID << " does not exist" << endl;
 			else
 			{
 				kill(shell->jobs[jobIndexToKill].PID, sigNum);
-				cout << "signal number " << sigNum << "was sent to pid " << shell->jobs[jobIndexToKill].PID << endl;
+				cout << "signal number " << sigNum << " was sent to pid " << shell->jobs[jobIndexToKill].PID << endl;
 			}
 		}
 	}
