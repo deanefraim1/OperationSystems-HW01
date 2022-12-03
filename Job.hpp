@@ -23,7 +23,7 @@ class Job
 {
 public:
     jobStatus status;
-    int PID;
+    pid_t PID;
     int jobID;
     string prompt;
     string command;
