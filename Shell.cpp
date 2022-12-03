@@ -91,9 +91,7 @@ void Shell::UpdateJobs()
         if(WIFEXITED(status))
             jobs.erase(jobs.begin() + i);
         else if(WIFSTOPPED(status))
-            jobs[i].UpdateFromRunningToStopped();
-        else if(WIFCONTINUED(status))
-            jobs[i].UpdateFromStoppedToBgRunning();
+            jobs[i].UpdateFromRunningToStopped();   
     }
 
     waitpid(fgJob.PID, &status, WNOHANG);
@@ -149,10 +147,10 @@ void Shell::ClearFgJob()
 
 void Shell::StopFgJob()
 {
-    if(fgJob.PID != NOT_EXCIST)
-    {
+    //if(fgJob.PID != NOT_EXCIST)
+    //{
         fgJob.UpdateFromRunningToStopped();
         InsertJobSorted(fgJob);
         ClearFgJob();
-    }
+    //}
 }
