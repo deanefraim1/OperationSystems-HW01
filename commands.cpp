@@ -107,7 +107,6 @@ int ExeCmd(string prompt)
 	
 	else if (cmd == "jobs") 
 	{
-		shell->UpdateJobsList();
 		shell->PrintAllJobsInfo();
 	}
 	/*************************************************/
