@@ -44,7 +44,7 @@ public:
 
     /// @brief find job with highest job id, and calc the next job id to enter the jobs vector
     /// @return the highest job id excist +1
-    int GetNextJobID();
+    int GetNextAvailableJobID();
 
     /// @brief print all jobs in the following format "[<job-id>] <prompt> : <jobPid> <jobRunningTime> secs" and add "(stopped)" at the end if the job is stopped
     void PrintAllJobsInfo();
@@ -54,6 +54,10 @@ public:
 
     /// @brief kills all jobs excists and if SIGTERM fails, it sends SIGKILL
     void KillAllJobs();
+
+    void StopFgJob();
+
+    void ClearFgJob();
 };
 
 #endif

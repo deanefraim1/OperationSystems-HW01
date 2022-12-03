@@ -117,7 +117,6 @@ int ExeCmd(string prompt)
 	/*************************************************/
 	else if (cmd == "fg") 
 	{
-		shell->UpdateJobsList();
 		if (num_arg == 0)
 		{
 			if(shell->jobs.empty())
@@ -134,9 +133,15 @@ int ExeCmd(string prompt)
 				else
 				{
 					shell->MoveJobToFg(jobIndexToFg);
-					waitpid(jobToFg.PID, NULL, WUNTRACED);
-					shell->fgJob = Job();
-				}	
+					int status;
+					waitpid(jobToFg.PID, &status, WUNTRACED | WCONTINUED);
+					if(WIFSTOPPED(status))
+					{
+						shell->fgJob.UpdateFromRunningToStopped();
+						shell->InsertJobSorted(shell->fgJob);
+					}
+					shell->ClearFgJob();
+				}
 			}
 		}
 			
@@ -161,16 +166,21 @@ int ExeCmd(string prompt)
 				else
 				{
 					shell->MoveJobToFg(jobIndexToFg);
-					waitpid(shell->fgJob.PID, NULL, WUNTRACED);
-					shell->fgJob = Job();
-				} 
+					int status;
+					waitpid(shell->fgJob.PID, &status, WUNTRACED | WCONTINUED);
+					if(WIFSTOPPED(status))
+					{
+						shell->fgJob.UpdateFromRunningToStopped();
+						shell->InsertJobSorted(shell->fgJob);
+					}
+					shell->ClearFgJob();
+				}
 			} 
 		}
 	}
 	/*************************************************/
 	else if (cmd == "bg") 
 	{
-		shell->UpdateJobsList();
 		if (num_arg == 0) // no argument => find the stopped job with maximum job id
 		{
 			int stoppedJobIndexWithMaxJobID = shell->GetStoppedJobIndexWithMaxJobID();
@@ -185,10 +195,7 @@ int ExeCmd(string prompt)
 					cerr << "smash error: kill failed" << endl;
 				else
 				{
-					time_t currentTime;
-					time(&currentTime);
-					jobToBg.timeStamp = difftime(currentTime, jobToBg.timeStamp);
-					jobToBg.status = fgRunning;
+					jobToBg.UpdateFromStoppedToBgRunning();
 					cout << "[" << jobToBg.jobID << "] " << jobToBg.prompt << " : " << jobToBg.PID << endl;
 				}
 			} 
@@ -215,21 +222,15 @@ int ExeCmd(string prompt)
 
 				else
 				{
-					time_t currentTime;
-					time(&currentTime);
-					jobToBg.timeStamp = difftime(currentTime, jobToBg.timeStamp);
-					jobToBg.status = fgRunning;
+					jobToBg.UpdateFromStoppedToBgRunning();
 					cout << "[" << jobToBg.jobID << "] " << jobToBg.prompt << " : " << jobToBg.PID << endl;
-				}
-					
-				
+				}	
 			} 
 		}
 	}
 	/*************************************************/
 	else if (cmd == "quit")
 	{
-		shell->UpdateJobsList();
 		if (args[1] == "kill") // kill all jobs befor quit the shell
 			shell->KillAllJobs();
 		free(shell);
@@ -248,8 +249,11 @@ int ExeCmd(string prompt)
 				cout << "smash error: kill: job-id " << jobID << " does not exist" << endl;
 			else
 			{
-				kill(shell->jobs[jobIndexToKill].PID, sigNum);
-				cout << "signal number " << sigNum << " was sent to pid " << shell->jobs[jobIndexToKill].PID << endl;
+				Job& jobToSignal = shell->jobs[jobIndexToKill];
+				if (kill(jobToSignal.PID, sigNum))
+					cerr << "smash error: kill failed" << endl;
+				else
+					cout << "signal number " << sigNum << " was sent to pid " << jobToSignal.PID << endl;
 			}
 		}
 	}
@@ -322,15 +326,24 @@ void ExeExternal(string args[MAX_ARG], string prompt, string cmd, int num_arg)
 			// Parent Proccess
 			if(kill(pID, SIGEXCIST) == EXCIST)
 			{
-				Job newJob;
 				if (args[num_arg] == "&")
-					shell->InsertJobSorted(Job(pID, shell->GetNextJobID(), prompt, cmd, bgRunning));
+					shell->InsertJobSorted(Job(pID, shell->GetNextAvailableJobID(), prompt, cmd, bgRunning));
 					
 				else
 				{
-					shell->fgJob = Job(pID, shell->GetNextJobID(), prompt, cmd, fgRunning);
-					waitpid(pID, NULL, WUNTRACED);
-					shell->fgJob = Job();
+					shell->fgJob = Job(pID, shell->GetNextAvailableJobID(), prompt, cmd, fgRunning);
+					int status;
+
+					if(waitpid(pID, &status, WUNTRACED | WCONTINUED) == ERROR)
+						cerr << "smash error: waitpid failed" << endl;
+
+					else
+					{
+						if(WIFSTOPPED(status))
+							shell->StopFgJob();
+						else
+							shell->ClearFgJob();
+					}
 				}
 			}	 
 			free(charArgs);

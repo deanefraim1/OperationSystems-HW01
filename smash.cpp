@@ -53,7 +53,8 @@ int main(int argc, char *argv[])
 	while (1)
 	{
 		cout << "smash > ";
-		getline(cin, prompt);		
+		getline(cin, prompt);
+		shell->UpdateJobsList();
 		ExeCmd(prompt);
 		/* initialize for next line read*/
 		prompt.clear();

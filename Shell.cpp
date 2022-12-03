@@ -19,7 +19,6 @@ Shell::Shell()
 
 int Shell::GetJobIndexByJobID(int id)
 {
-    UpdateJobsList();
     for (int i = 0; i < jobs.size(); i++)
     {
         if(jobs[i].jobID == id)
@@ -30,7 +29,6 @@ int Shell::GetJobIndexByJobID(int id)
 
 int Shell::GetJobIndexByPID(int pid)
 {
-    UpdateJobsList();
     for (int i = 0; i < jobs.size(); i++)
     {
         if(jobs[i].PID == pid)
@@ -43,7 +41,6 @@ void Shell::InsertJobSorted(Job job)
 {
     int i;
     bool inserted = false;
-    UpdateJobsList();
     for (i = 0; i < jobs.size(); i++)
     {
 		if(jobs[i].jobID > job.jobID)
@@ -62,24 +59,21 @@ void Shell::InsertJobSorted(Job job)
 
 void Shell::MoveJobToFg(int jobIndexToFg)
 {
-    UpdateJobsList();
     Job jobToFg = jobs[jobIndexToFg];
     vector<Job>::iterator jobIteratorToFg = jobs.begin() + jobIndexToFg;
     jobs.erase(jobIteratorToFg);
 
     if(jobToFg.status == stopped)
-    {
-        time_t currentTime;
-        time(&currentTime);
-        jobToFg.timeStamp = currentTime - jobToFg.timeStamp; //timeStamo equals to runTime so far (for stopped jobs)
-    }   
-    jobToFg.status = fgRunning;
+        jobToFg.UpdateFromStoppedToFgRunning();
+
+    else
+        jobToFg.UpdateFromBgRunningToFgRunning();
+
     fgJob = jobToFg;
 }
 
 int Shell::GetStoppedJobIndexWithMaxJobID()
 {
-    UpdateJobsList();
     for (int i = jobs.size() - 1; i >= 0; i++)
     {
         if(jobs[i].status == stopped)
@@ -92,14 +86,19 @@ void Shell::UpdateJobsList()
 {
     for (int i = 0; i < jobs.size(); i++)
     {
-        if(kill(jobs[i].PID, SIGEXCIST) != EXCIST)
+        int status;
+        waitpid(jobs[i].PID, &status, WNOHANG);
+        if(WIFEXITED(status))
             jobs.erase(jobs.begin() + i);
+        if(WIFSTOPPED(status))
+            jobs[i].UpdateFromRunningToStopped();
+        if(WIFCONTINUED(status))
+            jobs[i].UpdateFromStoppedToBgRunning();
     }
 }
 
-int Shell::GetNextJobID()
+int Shell::GetNextAvailableJobID()
 {
-    UpdateJobsList();
     if (jobs.size() > 0)
         return (jobs.end()-1).base()->jobID + 1;
     else
@@ -108,7 +107,6 @@ int Shell::GetNextJobID()
 
 void Shell::PrintAllJobsInfo()
 {
-    UpdateJobsList();
     for (int i = 0; i < jobs.size(); i++)
     {
 		cout << "[" << jobs[i].jobID << "] " << jobs[i].prompt << " : " << jobs[i].PID << " " << jobs[i].getRunningTime() << " secs";
@@ -125,7 +123,6 @@ void Shell::PrintShellPID()
 
 void Shell::KillAllJobs()
 {
-    UpdateJobsList();
     for (int i = 0; i < jobs.size(); i++)
     {
 		cout << "[" << jobs[i].jobID << "] " << jobs[i].prompt << " - Sending SIGTERM...";
@@ -137,4 +134,19 @@ void Shell::KillAllJobs()
 		}
 		cout << " Done." << endl;
 	}
+}
+
+void Shell::ClearFgJob()
+{
+    fgJob = Job();
+}
+
+void Shell::StopFgJob()
+{
+    if(fgJob.PID != NOT_EXCIST)
+    {
+        fgJob.UpdateFromRunningToStopped();
+        InsertJobSorted(fgJob);
+        ClearFgJob();
+    }
 }

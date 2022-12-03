@@ -22,12 +22,7 @@ void SignalHandler_ctrZ(int signal)
       if(kill(shell->fgJob.PID, SIGSTOP) == 0)
       {
          cout << "smash: process " << shell->fgJob.PID <<  " was stopped" << endl;
-         shell->fgJob.status = stopped;
-         time_t currentTime;
-         time(&currentTime);
-         shell->fgJob.timeStamp = difftime(currentTime, shell->fgJob.timeStamp); //when job stopped the timeStamp becoms her runing time so far.
-         shell->InsertJobSorted(shell->fgJob);
-         shell->fgJob = Job();
+         shell->StopFgJob();
       } 
       else cerr << "smash error: kill failed" << endl;
    }
@@ -43,7 +38,7 @@ void SignalHandler_ctrC(int signal)
       if(kill(shell->fgJob.PID, SIGKILL) == 0)
       {
          cout << "smash: process " << shell->fgJob.PID <<  " was killed" << endl;
-         shell->fgJob = Job();
+         shell->ClearFgJob();
       }  
       else cerr << "smash error: kill failed" << endl;
    }
