@@ -121,7 +121,7 @@ int ExeCmd(string prompt)
 		if (num_arg == 0)
 		{
 			if(shell->jobs.empty())
-				cout << "smash error: fg: jobs list is empty" << endl; //TODO: cerr??
+				cout << "smash error: fg: jobs list is empty" << endl;
 
 			else
 			{
@@ -141,7 +141,7 @@ int ExeCmd(string prompt)
 		}
 			
 		else if((num_arg != 1) || (!regex_match(args[1], regex("(\\d)+"))))
-			cout << "smash error: fg: invalid arguments" << endl; //TODO: cerr??
+			cout << "smash error: fg: invalid arguments" << endl;
 
 		else
 		{
@@ -149,7 +149,7 @@ int ExeCmd(string prompt)
 			int jobIndexToFg = shell->GetJobIndexByJobID(jobIDToFg);
 
 			if(jobIndexToFg == NOT_EXCIST)
-				cout << "smash error: fg: job-id " << jobIDToFg << " does not exist " << endl; //TODO: cerr??
+				cout << "smash error: fg: job-id " << jobIDToFg << " does not exist " << endl;
 
 			else
 			{
@@ -161,7 +161,7 @@ int ExeCmd(string prompt)
 				else
 				{
 					shell->MoveJobToFg(jobIndexToFg);
-					waitpid(shell->fgJob.PID, NULL, WUNTRACED); //TODO - do we need the status??
+					waitpid(shell->fgJob.PID, NULL, WUNTRACED);
 					shell->fgJob = Job();
 				} 
 			} 
@@ -175,7 +175,7 @@ int ExeCmd(string prompt)
 			int stoppedJobIndexWithMaxJobID = shell->GetStoppedJobIndexWithMaxJobID();
 
 			if (stoppedJobIndexWithMaxJobID == NOT_EXCIST)
-				cout << "smash error: bg: there are no stopped jobs to resume" << endl; //TODO: cerr??
+				cout << "smash error: bg: there are no stopped jobs to resume" << endl;
 
 			else
 			{
@@ -194,20 +194,20 @@ int ExeCmd(string prompt)
 		}
 
 		else if((num_arg != 1) || (!regex_match(args[1], regex("(\\d)+")))) // more than 1 argument or one argument but not a number
-			cout << "smash error: bg: invalid arguments" << endl; //TODO: cerr??
+			cout << "smash error: bg: invalid arguments" << endl;
 
 		else
 		{
 			int jobIndexToBg = shell->GetJobIndexByJobID(atoi(args[1].c_str()));
 
 			if (jobIndexToBg == NOT_EXCIST)
-				cout << "smash error: bg: job-id " << args[1] << " does not exist" << endl; //TODO: cerr??
+				cout << "smash error: bg: job-id " << args[1] << " does not exist" << endl;
 
 			else
 			{
 				Job& jobToBg = shell->jobs[jobIndexToBg];
 				if(jobToBg.status != stopped) // the given job is not stopped
-				cout << "smash error: bg: job-id " << args[1] << " is already running in the background" << endl; //TODO: cerr??
+				cout << "smash error: bg: job-id " << args[1] << " is already running in the background" << endl;
 
 				else if(kill(jobToBg.PID, SIGCONT) != SUCCESS)
 					cerr << "smash error: kill failed" << endl;
@@ -236,14 +236,14 @@ int ExeCmd(string prompt)
 	else if (cmd == "kill")
 	{
 		if(num_arg != 2 || !regex_match(args[1], regex("-(\\d)+")) || !regex_match(args[2], regex("(\\d)+")))
-			cout << "smash error: kill: invalid arguments" << endl; //TODO: cerr??
+			cout << "smash error: kill: invalid arguments" << endl;
 		else
 		{
 			int sigNum = atoi(args[1].substr(1, args[1].length()).c_str());
 			int jobID = atoi(args[2].c_str());
 			int jobIndexToKill = shell->GetJobIndexByJobID(jobID);
 			if(jobIndexToKill == NOT_EXCIST)
-				cout << "smash error: kill: job-id <" << jobID << "> does not exist" << endl; //TODO: cerr??
+				cout << "smash error: kill: job-id <" << jobID << "> does not exist" << endl;
 			else
 			{
 				kill(shell->jobs[jobIndexToKill].PID, sigNum);
@@ -254,7 +254,7 @@ int ExeCmd(string prompt)
 	else if (cmd == "diff")
 	{
 		if(num_arg != 2)
-			cout << "smash error: diff: invalid arguments" << endl; //TODO: cerr??
+			cout << "smash error: diff: invalid arguments" << endl;
 		else
 		{
 			ifstream file1(args[1], ios::in|ios::binary|ios::ate); //open args[1] file for reading (with seek in the end to check size late), acces him through "file1"
@@ -282,7 +282,7 @@ int ExeCmd(string prompt)
 	}
 	if (illegal_cmd == true)
 	{
-		cout << "smash error: \"" << prompt << "\"" << endl; //TODO: cerr??
+		cout << "smash error: \"" << prompt << "\"" << endl;
 		return 1;
 	}
     return 0;
@@ -302,7 +302,7 @@ void ExeExternal(string args[MAX_ARG], string prompt, string cmd, int num_arg)
     	case -1: 
 		{
 			//fork returned error
-				cerr << "smash error: fork failed" << endl; //TODO: cerr??
+				cerr << "smash error: fork failed" << endl;
 				free(charArgs);
 		}
 				
@@ -311,7 +311,7 @@ void ExeExternal(string args[MAX_ARG], string prompt, string cmd, int num_arg)
 			// Child Process
          		setpgrp();
 				execvp(cmd.c_str(), charArgs);
-				cerr << "smash error: exec failed" << endl; //TODO: cerr??
+				cerr << "smash error: exec failed" << endl;
 				exit(1);
 		}
 
@@ -327,7 +327,7 @@ void ExeExternal(string args[MAX_ARG], string prompt, string cmd, int num_arg)
 				else
 				{
 					shell->fgJob = Job(pID, shell->GetNextJobID(), prompt, cmd, fgRunning);
-					waitpid(pID, NULL, WUNTRACED); //TODO - do we need the status??
+					waitpid(pID, NULL, WUNTRACED);
 					shell->fgJob = Job();
 				}
 			}	 
