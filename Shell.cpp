@@ -19,6 +19,7 @@ Shell::Shell()
 
 int Shell::GetJobIndexByJobID(int id)
 {
+    UpdateJobsList();
     for (int i = 0; i < jobs.size(); i++)
     {
         if(jobs[i].jobID == id)
@@ -29,6 +30,7 @@ int Shell::GetJobIndexByJobID(int id)
 
 int Shell::GetJobIndexByPID(int pid)
 {
+    UpdateJobsList();
     for (int i = 0; i < jobs.size(); i++)
     {
         if(jobs[i].PID == pid)
@@ -41,6 +43,7 @@ void Shell::InsertJobSorted(Job job)
 {
     int i;
     bool inserted = false;
+    UpdateJobsList();
     for (i = 0; i < jobs.size(); i++)
     {
 		if(jobs[i].jobID > job.jobID)
@@ -59,6 +62,7 @@ void Shell::InsertJobSorted(Job job)
 
 void Shell::MoveJobToFg(int jobIndexToFg)
 {
+    UpdateJobsList();
     Job jobToFg = jobs[jobIndexToFg];
     vector<Job>::iterator jobIteratorToFg = jobs.begin() + jobIndexToFg;
     jobs.erase(jobIteratorToFg);
@@ -75,7 +79,8 @@ void Shell::MoveJobToFg(int jobIndexToFg)
 
 int Shell::GetStoppedJobIndexWithMaxJobID()
 {
-    for (int i = jobs.size()-1; i >= 0; i++)
+    UpdateJobsList();
+    for (int i = jobs.size() - 1; i >= 0; i++)
     {
         if(jobs[i].status == stopped)
             return i;
@@ -94,7 +99,8 @@ void Shell::UpdateJobsList()
 
 int Shell::GetNextJobID()
 {
-    if(jobs.size() > 0)
+    UpdateJobsList();
+    if (jobs.size() > 0)
         return (jobs.end()-1).base()->jobID + 1;
     else
         return 1;
@@ -102,8 +108,9 @@ int Shell::GetNextJobID()
 
 void Shell::PrintAllJobsInfo()
 {
+    UpdateJobsList();
     for (int i = 0; i < jobs.size(); i++)
-	{
+    {
 		cout << "[" << jobs[i].jobID << "] " << jobs[i].prompt << " : " << jobs[i].PID << " " << jobs[i].getRunningTime() << " secs";
 		if(jobs[i].status == stopped)
 			cout << " (stopped)";
@@ -118,8 +125,9 @@ void Shell::PrintShellPID()
 
 void Shell::KillAllJobs()
 {
+    UpdateJobsList();
     for (int i = 0; i < jobs.size(); i++)
-	{
+    {
 		cout << "[" << jobs[i].jobID << "] " << jobs[i].prompt << " - Sending SIGTERM...";
 		kill(jobs[i].PID, SIGTERM);
 		if(!jobs[i].waitUntilTerminated(5, 0.1))
