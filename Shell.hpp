@@ -40,7 +40,7 @@ public:
     int GetStoppedJobIndexWithMaxJobID();
 
     /// @brief updates the job list according to which one is done via sigexcist
-    void UpdateJobsList();
+    void UpdateJobs();
 
     /// @brief find job with highest job id, and calc the next job id to enter the jobs vector
     /// @return the highest job id excist +1

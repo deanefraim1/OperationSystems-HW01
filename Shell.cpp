@@ -82,19 +82,25 @@ int Shell::GetStoppedJobIndexWithMaxJobID()
     return NOT_EXCIST;
 }
 
-void Shell::UpdateJobsList()
+void Shell::UpdateJobs()
 {
+    int status;
     for (int i = 0; i < jobs.size(); i++)
     {
-        int status;
         waitpid(jobs[i].PID, &status, WNOHANG);
         if(WIFEXITED(status))
             jobs.erase(jobs.begin() + i);
-        if(WIFSTOPPED(status))
+        else if(WIFSTOPPED(status))
             jobs[i].UpdateFromRunningToStopped();
-        if(WIFCONTINUED(status))
+        else if(WIFCONTINUED(status))
             jobs[i].UpdateFromStoppedToBgRunning();
     }
+
+    waitpid(fgJob.PID, &status, WNOHANG);
+    if (WIFEXITED(status))
+        ClearFgJob();
+    else if (WIFSTOPPED(status))
+        StopFgJob();
 }
 
 int Shell::GetNextAvailableJobID()

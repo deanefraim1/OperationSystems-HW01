@@ -54,7 +54,7 @@ int main(int argc, char *argv[])
 	{
 		cout << "smash > ";
 		getline(cin, prompt);
-		shell->UpdateJobsList();
+		shell->UpdateJobs();
 		ExeCmd(prompt);
 		/* initialize for next line read*/
 		prompt.clear();
