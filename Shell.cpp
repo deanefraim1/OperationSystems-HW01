@@ -104,7 +104,7 @@ void Shell::PrintAllJobsInfo()
 {
     for (int i = 0; i < jobs.size(); i++)
 	{
-		cout << "[" << jobs[i].jobID << "] " << jobs[i].prompt << " : " << jobs[i].PID << " " << jobs[i].getRunningTime() << " secs"; //TODO: should print the whole command prompt or just the command itdelf?
+		cout << "[" << jobs[i].jobID << "] " << jobs[i].prompt << " : " << jobs[i].PID << " " << jobs[i].getRunningTime() << " secs";
 		if(jobs[i].status == stopped)
 			cout << " (stopped)";
 		cout << endl;
