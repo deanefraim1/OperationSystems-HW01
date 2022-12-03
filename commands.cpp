@@ -135,11 +135,10 @@ int ExeCmd(string prompt)
 					shell->MoveJobToFg(jobIndexToFg);
 					int status;
 					waitpid(jobToFg.PID, &status, WUNTRACED | WCONTINUED);
+
 					if(WIFSTOPPED(status))
-					{
-						shell->fgJob.UpdateFromRunningToStopped();
-						shell->InsertJobSorted(shell->fgJob);
-					}
+						shell->StopFgJob();
+
 					shell->ClearFgJob();
 				}
 			}
@@ -169,10 +168,8 @@ int ExeCmd(string prompt)
 					int status;
 					waitpid(shell->fgJob.PID, &status, WUNTRACED | WCONTINUED);
 					if(WIFSTOPPED(status))
-					{
-						shell->fgJob.UpdateFromRunningToStopped();
-						shell->InsertJobSorted(shell->fgJob);
-					}
+						shell->StopFgJob();
+					
 					shell->ClearFgJob();
 				}
 			} 
