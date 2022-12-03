@@ -62,39 +62,39 @@ bool Job::waitUntilTerminated(double maxTimeToWait, double checkIntervals)
 
 void Job::UpdateFromStoppedToBgRunning()
 {
-    if(status == stopped)
-    {
+    //if(status == stopped)
+    //{
         time_t currentTime;
 	    time(&currentTime);
 	    timeStamp = difftime(currentTime, timeStamp);
         status = bgRunning;
-    }
+    //}
 }
 
 void Job::UpdateFromStoppedToFgRunning()
 {
-    if(status == stopped)
-    {
+    //if(status == stopped)
+    //{
         time_t currentTime;
 	    time(&currentTime);
 	    timeStamp = difftime(currentTime, timeStamp);
         status = fgRunning;
-    }
+    //}
 }
 
 void Job::UpdateFromBgRunningToFgRunning()
 {
-    if(status == bgRunning)
+    //if(status == bgRunning)
         status = fgRunning;
 }
 
 void Job::UpdateFromRunningToStopped()
 {
-    if((status == bgRunning) || (status == fgRunning))
-    {
+    //if((status == bgRunning) || (status == fgRunning))
+    //{
         timeStamp = getRunningTime();
         status = stopped;
-    }
+    //}
 }
 
 

@@ -134,7 +134,7 @@ int ExeCmd(string prompt)
 				{
 					shell->MoveJobToFg(jobIndexToFg);
 					int status;
-					waitpid(jobToFg.PID, &status, WUNTRACED | WCONTINUED);
+					waitpid(jobToFg.PID, &status, WUNTRACED);
 
 					//if(WIFEXITED(status))
 					//	shell->ClearFgJob();
@@ -166,7 +166,7 @@ int ExeCmd(string prompt)
 				{
 					shell->MoveJobToFg(jobIndexToFg);
 					int status;
-					waitpid(shell->fgJob.PID, &status, WUNTRACED | WCONTINUED);
+					waitpid(jobToFg.PID, &status, WUNTRACED);
 					//if(WIFEXITED(status))
 					//	shell->ClearFgJob();
 					//else if (WIFSTOPPED(status))
@@ -331,7 +331,7 @@ void ExeExternal(string args[MAX_ARG], string prompt, string cmd, int num_arg)
 					shell->fgJob = Job(pID, shell->GetNextAvailableJobID(), prompt, cmd, fgRunning);
 					int status;
 
-					if(waitpid(pID, &status, WUNTRACED | WCONTINUED) == ERROR)
+					if(waitpid(pID, &status, WUNTRACED) == ERROR)
 						cerr << "smash error: waitpid failed" << endl;
 
 					//else
