@@ -100,7 +100,7 @@ void Shell::UpdateJobs()
         }
     }
 
-    if(waitpid(fgJob.PID, &status, WNOHANG | WUNTRACED) > 0)
+    if (waitpid(fgJob.PID, &status, WNOHANG | WUNTRACED) > 0)
     {
         if (WIFEXITED(status) || WIFSIGNALED(status))
             ClearFgJob();
@@ -108,7 +108,6 @@ void Shell::UpdateJobs()
         else if (WIFSTOPPED(status))
             StopFgJob();
     }
-    
 }
 
 int Shell::GetNextAvailableJobID()

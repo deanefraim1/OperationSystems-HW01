@@ -14,7 +14,7 @@ using namespace std;
 
 extern Shell *shell;
 
-void SignalHandler_ctrZ(int signal)
+void SignalHandler_ctrZ(int signal) //TODO - add the fetching from waitpid&wnohang so that the status wont bee in changed mode next "updatejobs" run
 {
    cout << "smash: caught ctrl-Z" << endl;
    if(shell->fgJob.PID != NOT_EXCIST)
@@ -30,7 +30,7 @@ void SignalHandler_ctrZ(int signal)
    //   cout << "smash > " << flush; //NOTE -  make the shell more user friendly
 }
 
-void SignalHandler_ctrC(int signal)
+void SignalHandler_ctrC(int signal) //TODO - add the fetching from waitpid&wnohang so that the status wont bee in changed mode next "updatejobs" run
 {
    cout << "smash: caught ctrl-C" << endl;
    if(shell->fgJob.PID != NOT_EXCIST)
