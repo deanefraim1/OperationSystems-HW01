@@ -89,18 +89,19 @@ void Shell::UpdateJobs()
     {
         if(waitpid(jobs[i].PID, &status, WNOHANG) > 0)
         {
-            if(WIFEXITED(status))
+            if(WIFEXITED(status) || WIFSIGNALED(status))
                 jobs.erase(jobs.begin() + i);
+
             else if(WIFSTOPPED(status))
                 jobs[i].UpdateFromRunningToStopped();   
         }
-        
     }
 
     if(waitpid(fgJob.PID, &status, WNOHANG) > 0)
     {
-        if (WIFEXITED(status))
+        if (WIFEXITED(status) || WIFSIGNALED(status))
             ClearFgJob();
+            
         else if (WIFSTOPPED(status))
             StopFgJob();
     }
