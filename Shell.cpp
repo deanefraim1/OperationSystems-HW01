@@ -154,10 +154,7 @@ void Shell::ClearFgJob()
 
 void Shell::StopFgJob()
 {
-    //if(fgJob.PID != NOT_EXCIST)
-    //{
         fgJob.UpdateFromRunningToStopped();
         InsertJobSorted(fgJob);
         ClearFgJob();
-    //}
 }
