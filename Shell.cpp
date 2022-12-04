@@ -87,18 +87,24 @@ void Shell::UpdateJobs()
     int status;
     for (int i = 0; i < jobs.size(); i++)
     {
-        waitpid(jobs[i].PID, &status, WNOHANG);
-        if(WIFEXITED(status))
-            jobs.erase(jobs.begin() + i);
-        else if(WIFSTOPPED(status))
-            jobs[i].UpdateFromRunningToStopped();   
+        if(waitpid(jobs[i].PID, &status, WNOHANG) > 0)
+        {
+            if(WIFEXITED(status))
+                jobs.erase(jobs.begin() + i);
+            else if(WIFSTOPPED(status))
+                jobs[i].UpdateFromRunningToStopped();   
+        }
+        
     }
 
-    waitpid(fgJob.PID, &status, WNOHANG); //FIXME - Not working!!!
-    if (WIFEXITED(status))
-        ClearFgJob();
-    else if (WIFSTOPPED(status))
-        StopFgJob();
+    if(waitpid(fgJob.PID, &status, WNOHANG) > 0)
+    {
+        if (WIFEXITED(status))
+            ClearFgJob();
+        else if (WIFSTOPPED(status))
+            StopFgJob();
+    }
+    
 }
 
 int Shell::GetNextAvailableJobID()
