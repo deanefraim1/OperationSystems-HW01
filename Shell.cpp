@@ -87,17 +87,20 @@ void Shell::UpdateJobs()
     int status;
     for (int i = 0; i < jobs.size(); i++)
     {
-        if(waitpid(jobs[i].PID, &status, WNOHANG) > 0)
+        if(waitpid(jobs[i].PID, &status, WNOHANG | WUNTRACED | WCONTINUED) > 0)
         {
             if(WIFEXITED(status) || WIFSIGNALED(status))
                 jobs.erase(jobs.begin() + i);
 
             else if(WIFSTOPPED(status))
-                jobs[i].UpdateFromRunningToStopped();   
+                jobs[i].UpdateFromRunningToStopped();
+
+            else if(WIFCONTINUED(status))
+                jobs[i].UpdateFromStoppedToBgRunning();
         }
     }
 
-    if(waitpid(fgJob.PID, &status, WNOHANG) > 0)
+    if(waitpid(fgJob.PID, &status, WNOHANG | WUNTRACED) > 0)
     {
         if (WIFEXITED(status) || WIFSIGNALED(status))
             ClearFgJob();

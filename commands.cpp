@@ -183,9 +183,16 @@ int ExeCmd(string prompt)
 					cerr << "smash error: kill failed" << endl;
 				else
 				{
-					jobToBg.UpdateFromStoppedToBgRunning();
-					cout << "[" << jobToBg.jobID << "] " << jobToBg.prompt << " : " << jobToBg.PID << endl;
-				}
+					int status;
+					if((waitpid(jobToBg.PID, &status, WNOHANG | WUNTRACED | WCONTINUED) > 0) && WIFCONTINUED(status))
+					{
+						jobToBg.UpdateFromStoppedToBgRunning();
+						cout << "[" << jobToBg.jobID << "] " << jobToBg.prompt << " : " << jobToBg.PID << endl;
+					}
+					
+					else 
+						cerr << "smash error: waitpid failed" << endl;
+				}	
 			} 
 		}
 
@@ -210,8 +217,15 @@ int ExeCmd(string prompt)
 
 				else
 				{
-					jobToBg.UpdateFromStoppedToBgRunning();
-					cout << "[" << jobToBg.jobID << "] " << jobToBg.prompt << " : " << jobToBg.PID << endl;
+					int status;
+					if((waitpid(jobToBg.PID, &status, WNOHANG | WUNTRACED | WCONTINUED) > 0) && WIFCONTINUED(status))
+					{
+						jobToBg.UpdateFromStoppedToBgRunning();
+						cout << "[" << jobToBg.jobID << "] " << jobToBg.prompt << " : " << jobToBg.PID << endl;
+					}
+					
+					else 
+						cerr << "smash error: waitpid failed" << endl;
 				}	
 			} 
 		}
