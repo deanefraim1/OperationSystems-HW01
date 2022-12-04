@@ -94,7 +94,7 @@ void Shell::UpdateJobs()
             jobs[i].UpdateFromRunningToStopped();   
     }
 
-    waitpid(fgJob.PID, &status, WNOHANG);
+    waitpid(fgJob.PID, &status, WNOHANG); //FIXME - Not working!!!
     if (WIFEXITED(status))
         ClearFgJob();
     else if (WIFSTOPPED(status))
