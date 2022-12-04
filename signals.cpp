@@ -19,9 +19,9 @@ void SignalHandler_ctrZ(int signal)
    int status;
    waitpid(shell->fgJob.PID, &status, WNOHANG);
    cout << "smash: caught ctrl-Z" << endl;
-   if((shell->fgJob.PID != NOT_EXCIST) && WIFSTOPPED(status))
+   if(shell->fgJob.PID != NOT_EXCIST)
    {
-      if(kill(shell->fgJob.PID, SIGSTOP) == 0)
+      if((kill(shell->fgJob.PID, SIGSTOP) == 0) && WIFSTOPPED(status))
       {
          cout << "smash: process " << shell->fgJob.PID <<  " was stopped" << endl;
          shell->StopFgJob();
@@ -37,9 +37,9 @@ void SignalHandler_ctrC(int signal)
    int status;
    waitpid(shell->fgJob.PID, &status, WNOHANG);
    cout << "smash: caught ctrl-C" << endl;
-   if((shell->fgJob.PID != NOT_EXCIST) && WIFSIGNALED(status))
+   if(shell->fgJob.PID != NOT_EXCIST)
    {
-      if(kill(shell->fgJob.PID, SIGKILL) == 0)
+      if((kill(shell->fgJob.PID, SIGKILL) == 0) && WIFSIGNALED(status))
       {
          cout << "smash: process " << shell->fgJob.PID <<  " was killed" << endl;
          shell->ClearFgJob();
