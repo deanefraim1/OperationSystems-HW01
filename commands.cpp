@@ -136,7 +136,7 @@ int ExeCmd(string prompt)
 					int status;
 					waitpid(jobToFg.PID, &status, WUNTRACED);
 
-					if(WIFEXITED(status))
+					if(WIFEXITED(status) || WIFSIGNALED(status))
 						shell->ClearFgJob();
 					else if (WIFSTOPPED(status))
 						shell->StopFgJob();
@@ -167,7 +167,7 @@ int ExeCmd(string prompt)
 					shell->MoveJobToFg(jobIndexToFg);
 					int status;
 					waitpid(jobToFg.PID, &status, WUNTRACED);
-					if(WIFEXITED(status))
+					if(WIFEXITED(status) || WIFSIGNALED(status))
 						shell->ClearFgJob();
 					else if (WIFSTOPPED(status))
 						shell->StopFgJob();
@@ -336,7 +336,7 @@ void ExeExternal(string args[MAX_ARG], string prompt, string cmd, int num_arg)
 
 					else
 					{
-						if(WIFEXITED(status))
+						if(WIFEXITED(status) || WIFSIGNALED(status))
 							shell->ClearFgJob();
 						else if(WIFSTOPPED(status))
 							shell->StopFgJob();
