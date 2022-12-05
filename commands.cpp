@@ -183,9 +183,7 @@ int ExeCmd(string prompt)
 					cerr << "smash error: kill failed" << endl;
 
 				else
-				{
 					cout << "[" << jobToBg.jobID << "] " << jobToBg.prompt << " : " << jobToBg.PID << endl;
-				}
 			} 
 		}
 
@@ -209,10 +207,7 @@ int ExeCmd(string prompt)
 					cerr << "smash error: kill failed" << endl;
 
 				else
-				{
-					jobToBg.UpdateFromStoppedToBgRunning();
 					cout << "[" << jobToBg.jobID << "] " << jobToBg.prompt << " : " << jobToBg.PID << endl;
-				}
 			} 
 		}
 	}

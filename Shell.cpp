@@ -82,13 +82,13 @@ int Shell::GetStoppedJobIndexWithMaxJobID()
     return NOT_EXCIST;
 }
 
-void Shell::UpdateJobs() //FIXME - NOT WORKING
+void Shell::UpdateJobs()
 {
     int status;
     pid_t waitpidReturnValue;
     for (int i = 0; i < jobs.size(); i++)
     {
-        waitpidReturnValue = waitpid(jobs[i].PID, &status, WNOHANG);
+        waitpidReturnValue = waitpid(jobs[i].PID, &status, WNOHANG | WCONTINUED);
         if (waitpidReturnValue > 0)
         {
             if(WIFEXITED(status) || WIFSIGNALED(status))
@@ -105,7 +105,7 @@ void Shell::UpdateJobs() //FIXME - NOT WORKING
             jobs.erase(jobs.begin() + i);
     }
 
-    waitpidReturnValue = waitpid(fgJob.PID, &status, WNOHANG);
+    waitpidReturnValue = waitpid(fgJob.PID, &status, WNOHANG | WCONTINUED);
     if (fgJob.PID != NOT_EXCIST)
     {
         if(waitpid(fgJob.PID, &status, WNOHANG) > 0)
