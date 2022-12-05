@@ -85,28 +85,40 @@ int Shell::GetStoppedJobIndexWithMaxJobID()
 void Shell::UpdateJobs() //FIXME - NOT WORKING
 {
     int status;
+    pid_t waitpidReturnValue;
     for (int i = 0; i < jobs.size(); i++)
     {
-        if(waitpid(jobs[i].PID, &status, WNOHANG | WUNTRACED | WCONTINUED) > 0)
+        waitpidReturnValue = waitpid(jobs[i].PID, &status, WNOHANG);
+        if (waitpidReturnValue > 0)
         {
             if(WIFEXITED(status) || WIFSIGNALED(status))
                 jobs.erase(jobs.begin() + i);
 
             else if(WIFSTOPPED(status))
                 jobs[i].UpdateFromRunningToStopped();
-
+            
             else if(WIFCONTINUED(status))
                 jobs[i].UpdateFromStoppedToBgRunning();
         }
+
+        else if(waitpidReturnValue == -1)
+            jobs.erase(jobs.begin() + i);
     }
 
-    if (waitpid(fgJob.PID, &status, WNOHANG | WUNTRACED) > 0)
+    waitpidReturnValue = waitpid(fgJob.PID, &status, WNOHANG);
+    if (fgJob.PID != NOT_EXCIST)
     {
-        if (WIFEXITED(status) || WIFSIGNALED(status))
-            ClearFgJob();
+        if(waitpid(fgJob.PID, &status, WNOHANG) > 0)
+        {
+            if (WIFEXITED(status) || WIFSIGNALED(status))
+                ClearFgJob();
             
-        else if (WIFSTOPPED(status))
-            StopFgJob();
+            else if (WIFSTOPPED(status))
+                StopFgJob();
+        }
+
+        else if(waitpidReturnValue == -1)
+            ClearFgJob();
     }
 }
 
@@ -140,7 +152,7 @@ void Shell::KillAllJobs()
     {
 		cout << "[" << jobs[i].jobID << "] " << jobs[i].prompt << " - Sending SIGTERM..." << flush;
 		kill(jobs[i].PID, SIGTERM);
-		if(!jobs[i].waitUntilTerminated(5, 1))
+		if(!jobs[i].waitUntilTerminated(5, 0.1))
 		{
 			cout << " (5 sec passed) Sending SIGKILL..." << flush;
 			kill(jobs[i].PID, SIGKILL);
@@ -156,7 +168,7 @@ void Shell::ClearFgJob()
 
 void Shell::StopFgJob()
 {
-        fgJob.UpdateFromRunningToStopped();
-        InsertJobSorted(fgJob);
-        ClearFgJob();
+    fgJob.UpdateFromRunningToStopped();
+    InsertJobSorted(fgJob);
+    ClearFgJob();
 }

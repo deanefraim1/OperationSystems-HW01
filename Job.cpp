@@ -49,15 +49,18 @@ double Job::getRunningTime()
 /// @param maxTimeToWait 
 /// @param checkIntervals 
 /// @return true if the pid is killed, false if maxTimeToWait arrived and the pid is still alive.
-bool Job::waitUntilTerminated(double maxTimeToWait, int checkIntervals) //FIXME - NOT WORKING
+bool Job::waitUntilTerminated(double maxTimeToWait, double checkIntervals)
 {
-	while(maxTimeToWait > 0)
-	{
-        waitpid(PID, NULL, WNOHANG | WUNTRACED); //clear the proccess if zombie
-        if ((kill(PID, SIGEXCIST) != EXCIST) && (errno == ESRCH))
+    useconds_t checkIntervalsInMilliSeconds = (int)(checkIntervals * 1000);
+    useconds_t maxTimeToWaitInMilliSeconds = (int)(maxTimeToWait * 1000);
+    int status;
+    while (maxTimeToWaitInMilliSeconds > 0)
+    {
+        waitpid(PID, &status, WNOHANG); //fetch the status of the job
+        if (WIFSIGNALED(status) && (WTERMSIG(status) == SIGTERM)) //job got signaled and terminated
             return true;
-        sleep(checkIntervals);
-		maxTimeToWait -= checkIntervals;
+        usleep(checkIntervalsInMilliSeconds);
+		maxTimeToWaitInMilliSeconds -= checkIntervalsInMilliSeconds;
 	}
 	return false;
 }
@@ -85,8 +88,8 @@ void Job::UpdateFromBgRunningToFgRunning()
 
 void Job::UpdateFromRunningToStopped()
 {
-        timeStamp = getRunningTime();
-        status = stopped;
+    timeStamp = getRunningTime();
+    status = stopped;
 }
 
 

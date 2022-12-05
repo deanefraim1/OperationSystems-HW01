@@ -56,6 +56,7 @@ int main(int argc, char *argv[])
 		getline(cin, prompt);
 		shell->UpdateJobs();
 		ExeCmd(prompt);
+		shell->UpdateJobs();
 		/* initialize for next line read*/
 		prompt.clear();
 	}

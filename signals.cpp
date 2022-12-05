@@ -14,14 +14,15 @@ using namespace std;
 
 extern Shell *shell;
 
-void SignalHandler_ctrZ(int signal) //TODO - add the fetching from waitpid&wnohang so that the status wont bee in changed mode next "updatejobs" run
+void SignalHandler_ctrZ(int signal)
 {
    cout << "smash: caught ctrl-Z" << endl;
    if(shell->fgJob.PID != NOT_EXCIST)
    {
       if(kill(shell->fgJob.PID, SIGSTOP) == 0)
       {
-         cout << "smash: process " << shell->fgJob.PID <<  " was stopped" << endl;
+         waitpid(shell->fgJob.PID, NULL, WNOHANG); //FIXME - it works also without this?!?!
+         cout << "smash: process " << shell->fgJob.PID << " was stopped" << endl;
          shell->StopFgJob();
       } 
       else cerr << "smash error: kill failed" << endl;
@@ -30,13 +31,14 @@ void SignalHandler_ctrZ(int signal) //TODO - add the fetching from waitpid&wnoha
    //   cout << "smash > " << flush; //NOTE -  make the shell more user friendly
 }
 
-void SignalHandler_ctrC(int signal) //TODO - add the fetching from waitpid&wnohang so that the status wont bee in changed mode next "updatejobs" run
+void SignalHandler_ctrC(int signal) 
 {
    cout << "smash: caught ctrl-C" << endl;
    if(shell->fgJob.PID != NOT_EXCIST)
    {
       if(kill(shell->fgJob.PID, SIGKILL) == 0)
       {
+         waitpid(shell->fgJob.PID, NULL, WNOHANG); //FIXME - it works also without this?!?!
          cout << "smash: process " << shell->fgJob.PID <<  " was killed" << endl;
          shell->ClearFgJob();
       }  

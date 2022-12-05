@@ -134,7 +134,7 @@ int ExeCmd(string prompt)
 				{
 					shell->MoveJobToFg(jobIndexToFg);
 					int status;
-					waitpid(jobToFg.PID, &status, WUNTRACED);
+					waitpid(shell->fgJob.PID, &status, WUNTRACED);
 				}
 			}
 		}
@@ -181,18 +181,11 @@ int ExeCmd(string prompt)
 				Job &jobToBg = shell->jobs[stoppedJobIndexWithMaxJobID];
 				if (kill(jobToBg.PID, SIGCONT) != SUCCESS)
 					cerr << "smash error: kill failed" << endl;
+
 				else
 				{
-					int status;
-					if((waitpid(jobToBg.PID, &status, WNOHANG | WUNTRACED | WCONTINUED) > 0) && WIFCONTINUED(status))
-					{
-						jobToBg.UpdateFromStoppedToBgRunning();
-						cout << "[" << jobToBg.jobID << "] " << jobToBg.prompt << " : " << jobToBg.PID << endl;
-					}
-					
-					else 
-						cerr << "smash error: waitpid failed" << endl;
-				}	
+					cout << "[" << jobToBg.jobID << "] " << jobToBg.prompt << " : " << jobToBg.PID << endl;
+				}
 			} 
 		}
 
@@ -217,16 +210,9 @@ int ExeCmd(string prompt)
 
 				else
 				{
-					int status;
-					if((waitpid(jobToBg.PID, &status, WNOHANG | WUNTRACED | WCONTINUED) > 0) && WIFCONTINUED(status))
-					{
-						jobToBg.UpdateFromStoppedToBgRunning();
-						cout << "[" << jobToBg.jobID << "] " << jobToBg.prompt << " : " << jobToBg.PID << endl;
-					}
-					
-					else 
-						cerr << "smash error: waitpid failed" << endl;
-				}	
+					jobToBg.UpdateFromStoppedToBgRunning();
+					cout << "[" << jobToBg.jobID << "] " << jobToBg.prompt << " : " << jobToBg.PID << endl;
+				}
 			} 
 		}
 	}
@@ -255,7 +241,15 @@ int ExeCmd(string prompt)
 				if (kill(jobToSignal.PID, sigNum))
 					cerr << "smash error: kill failed" << endl;
 				else
+				{
+					if(sigNum == SIGSTOP)
+						jobToSignal.UpdateFromRunningToStopped();
+
+					else if(sigNum == SIGKILL)
+						shell->jobs.erase(shell->jobs.begin() + jobIndexToKill);
+
 					cout << "signal number " << sigNum << " was sent to pid " << jobToSignal.PID << endl;
+				}
 			}
 		}
 	}
