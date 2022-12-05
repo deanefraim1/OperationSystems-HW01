@@ -3,6 +3,7 @@
 
 #include "Job.hpp"
 #include <string>
+#include <iostream>
 
 #define SIGEXCIST 0
 #define EXCIST 0
@@ -48,13 +49,14 @@ double Job::getRunningTime()
 /// @param maxTimeToWait 
 /// @param checkIntervals 
 /// @return true if the pid is killed, false if maxTimeToWait arrived and the pid is still alive.
-bool Job::waitUntilTerminated(double maxTimeToWait, double checkIntervals)
+bool Job::waitUntilTerminated(double maxTimeToWait, int checkIntervals) //FIXME - NOT WORKING
 {
 	while(maxTimeToWait > 0)
 	{
-		sleep(checkIntervals);
-		if(kill(PID, SIGEXCIST) != EXCIST)
-			return true;
+        waitpid(PID, NULL, WNOHANG | WUNTRACED); //clear the proccess if zombie
+        if ((kill(PID, SIGEXCIST) != EXCIST) && (errno == ESRCH))
+            return true;
+        sleep(checkIntervals);
 		maxTimeToWait -= checkIntervals;
 	}
 	return false;
