@@ -82,7 +82,7 @@ int Shell::GetStoppedJobIndexWithMaxJobID()
     return NOT_EXCIST;
 }
 
-void Shell::UpdateJobs()
+void Shell::UpdateJobs() //FIXME - NOT WORKING
 {
     int status;
     for (int i = 0; i < jobs.size(); i++)
@@ -138,11 +138,11 @@ void Shell::KillAllJobs()
 {
     for (int i = 0; i < jobs.size(); i++)
     {
-		cout << "[" << jobs[i].jobID << "] " << jobs[i].prompt << " - Sending SIGTERM...";
+		cout << "[" << jobs[i].jobID << "] " << jobs[i].prompt << " - Sending SIGTERM..." << flush;
 		kill(jobs[i].PID, SIGTERM);
-		if(!jobs[i].waitUntilTerminated(5, 0.1))
+		if(!jobs[i].waitUntilTerminated(5, 1))
 		{
-			cout << " (5 sec passed) Sending SIGKILL...";
+			cout << " (5 sec passed) Sending SIGKILL..." << flush;
 			kill(jobs[i].PID, SIGKILL);
 		}
 		cout << " Done." << endl;
