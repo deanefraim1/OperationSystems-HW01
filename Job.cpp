@@ -56,8 +56,8 @@ bool Job::waitUntilTerminated(double maxTimeToWait, double checkIntervals)
     int status;
     while (maxTimeToWaitInMilliSeconds > 0)
     {
-        waitpid(PID, &status, WNOHANG); //fetch the status of the job
-        if (WIFSIGNALED(status) && (WTERMSIG(status) == SIGTERM)) //job got signaled and terminated
+        waitpid(PID, &status, WNOHANG);
+        if (WIFEXITED(status) || WIFSIGNALED(status)) //NOTE - ask lior if its ok to add if exited??
             return true;
         usleep(checkIntervalsInMilliSeconds);
 		maxTimeToWaitInMilliSeconds -= checkIntervalsInMilliSeconds;
