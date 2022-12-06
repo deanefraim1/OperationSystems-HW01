@@ -134,7 +134,22 @@ int ExeCmd(string prompt)
 				{
 					shell->MoveJobToFg(jobIndexToFg);
 					int status;
-					waitpid(shell->fgJob.PID, &status, WUNTRACED);
+					pid_t waitpidReturnValue = waitpid(shell->fgJob.PID, &status, WUNTRACED);
+
+					if(waitpidReturnValue > 0)
+					{
+						if(WIFEXITED(status) || WIFSIGNALED(status))
+							shell->ClearFgJob();
+
+						else if(WIFSTOPPED(status))
+							shell->StopFgJob();
+					}
+
+					else if(waitpidReturnValue == -1)
+					{
+						shell->ClearFgJob();
+						cerr << "smash error: waitpid failed" << endl;
+					}
 				}
 			}
 		}
@@ -161,7 +176,22 @@ int ExeCmd(string prompt)
 				{
 					shell->MoveJobToFg(jobIndexToFg);
 					int status;
-					waitpid(jobToFg.PID, &status, WUNTRACED);
+					pid_t waitpidReturnValue = waitpid(shell->fgJob.PID, &status, WUNTRACED);
+
+					if(waitpidReturnValue > 0)
+					{
+						if(WIFEXITED(status) || WIFSIGNALED(status))
+							shell->ClearFgJob();
+
+						else if(WIFSTOPPED(status))
+							shell->StopFgJob();
+					}
+
+					else if(waitpidReturnValue == -1)
+					{
+						shell->ClearFgJob();
+						cerr << "smash error: waitpid failed" << endl;
+					}
 				}
 			} 
 		}
@@ -324,9 +354,23 @@ void ExeExternal(string args[MAX_ARG], string prompt, string cmd, int num_arg)
 				{
 					shell->fgJob = Job(pID, shell->GetNextAvailableJobID(), prompt, cmd, fgRunning);
 					int status;
+					
+					pid_t waitpidReturnValue = waitpid(shell->fgJob.PID, &status, WUNTRACED);
 
-					if(waitpid(pID, &status, WUNTRACED) == ERROR)
+					if(waitpidReturnValue > 0)
+					{
+						if(WIFEXITED(status) || WIFSIGNALED(status))
+							shell->ClearFgJob();
+
+						else if(WIFSTOPPED(status))
+							shell->StopFgJob();
+					}
+
+					else if(waitpidReturnValue == -1)
+					{
+						shell->ClearFgJob();
 						cerr << "smash error: waitpid failed" << endl;
+					}
 				}
 			}	 
 			free(charArgs);

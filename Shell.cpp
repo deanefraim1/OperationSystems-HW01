@@ -108,7 +108,7 @@ void Shell::UpdateJobs()
     waitpidReturnValue = waitpid(fgJob.PID, &status, WNOHANG | WCONTINUED);
     if (fgJob.PID != NOT_EXCIST)
     {
-        if(waitpid(fgJob.PID, &status, WNOHANG) > 0)
+        if(waitpidReturnValue > 0)
         {
             if (WIFEXITED(status) || WIFSIGNALED(status))
                 ClearFgJob();

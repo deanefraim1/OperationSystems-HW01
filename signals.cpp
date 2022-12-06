@@ -20,11 +20,8 @@ void SignalHandler_ctrZ(int signal)
    if(shell->fgJob.PID != NOT_EXCIST)
    {
       if(kill(shell->fgJob.PID, SIGSTOP) == 0)
-      {
-         waitpid(shell->fgJob.PID, NULL, WNOHANG); //FIXME - it works also without this?!?!
          cout << "smash: process " << shell->fgJob.PID << " was stopped" << endl;
-         shell->StopFgJob();
-      } 
+      
       else cerr << "smash error: kill failed" << endl;
    }
    //else
@@ -37,11 +34,8 @@ void SignalHandler_ctrC(int signal)
    if(shell->fgJob.PID != NOT_EXCIST)
    {
       if(kill(shell->fgJob.PID, SIGKILL) == 0)
-      {
-         waitpid(shell->fgJob.PID, NULL, WNOHANG); //FIXME - it works also without this?!?!
          cout << "smash: process " << shell->fgJob.PID <<  " was killed" << endl;
-         shell->ClearFgJob();
-      }  
+         
       else cerr << "smash error: kill failed" << endl;
    }
    //else
