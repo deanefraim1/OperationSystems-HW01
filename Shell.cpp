@@ -94,10 +94,10 @@ void Shell::UpdateJobs()
             if(WIFEXITED(status) || WIFSIGNALED(status))
                 jobs.erase(jobs.begin() + i);
 
-            else if(WIFSTOPPED(status))
+            else if(WIFSTOPPED(status) && (jobs[i].status != stopped))
                 jobs[i].UpdateFromRunningToStopped();
             
-            else if(WIFCONTINUED(status))
+            else if(WIFCONTINUED(status)&& (jobs[i].status == stopped))
                 jobs[i].UpdateFromStoppedToBgRunning();
         }
 
@@ -105,7 +105,7 @@ void Shell::UpdateJobs()
             jobs.erase(jobs.begin() + i);
     }
 
-    waitpidReturnValue = waitpid(fgJob.PID, &status, WNOHANG | WUNTRACED | WCONTINUED);
+    waitpidReturnValue = waitpid(fgJob.PID, &status, WNOHANG | WUNTRACED);
     if (fgJob.PID != NOT_EXCIST)
     {
         if(waitpidReturnValue > 0)
