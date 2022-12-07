@@ -15,5 +15,5 @@ Shell.o: Shell.cpp Shell.hpp Job.hpp
 Job.o: Job.cpp Job.hpp
 # Cleaning old files before new make
 clean:
-	$(RM) $(TARGET) *.o *~ "#"* core.*
+	$(RM) $(TARGET) *.o *~ "#"* core.* smash
 
