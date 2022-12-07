@@ -22,7 +22,11 @@ void SignalHandler_ctrZ(int signal)
       if(kill(shell->fgJob.PID, SIGSTOP) == 0)
          cout << "smash: process " << shell->fgJob.PID << " was stopped" << endl;
       
-      else cerr << "smash error: kill failed" << endl;
+      else
+      {
+         cerr << "smash error: kill failed" << endl;
+         exit(-1);
+      } 
    }
    //else
    //   cout << "smash > " << flush; //NOTE -  make the shell more user friendly
@@ -36,7 +40,11 @@ void SignalHandler_ctrC(int signal)
       if(kill(shell->fgJob.PID, SIGKILL) == 0)
          cout << "smash: process " << shell->fgJob.PID <<  " was killed" << endl;
          
-      else cerr << "smash error: kill failed" << endl;
+      else
+      {
+         cerr << "smash error: kill failed" << endl;
+         exit(-1);
+      }
    }
    //else
    //   cout << "smash > " << flush; //NOTE -  make the shell more user friendly

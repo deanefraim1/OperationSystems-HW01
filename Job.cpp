@@ -51,14 +51,14 @@ double Job::getRunningTime()
 /// @return true if the pid is killed, false if maxTimeToWait arrived and the pid is still alive.
 bool Job::waitUntilTerminated(double maxTimeToWait, double checkIntervals)
 {
-    useconds_t checkIntervalsInMicroSeconds = (int)(checkIntervals * 1000000);
-    useconds_t maxTimeToWaitInMicroSeconds = (int)(maxTimeToWait * 1000000);
+    useconds_t checkIntervalsInMicroSeconds = (useconds_t)(checkIntervals * 1000000);
+    useconds_t maxTimeToWaitInMicroSeconds = (useconds_t)(maxTimeToWait * 1000000);
     int status;
 
     while (maxTimeToWaitInMicroSeconds > 0)
     {
-        waitpid(PID, &status, WNOHANG); //NOTE - ask lior why although the job is stopped, its still succeded to terminate via sigterm?
-        if (WIFEXITED(status) || WIFSIGNALED(status)) //NOTE - ask lior if its ok to add if exited??
+        pid_t waitpidReturnValue = waitpid(PID, &status, WNOHANG); //NOTE - ask lior why although the job is stopped, its still succeded to terminate via sigterm?
+        if ((waitpidReturnValue > 0) && (WIFEXITED(status) || WIFSIGNALED(status))) //NOTE - ask lior if its ok to add if exited??
             return true;
         usleep(checkIntervalsInMicroSeconds);
 		maxTimeToWaitInMicroSeconds -= checkIntervalsInMicroSeconds;

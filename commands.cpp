@@ -128,7 +128,10 @@ int ExeCmd(string prompt)
 				Job& jobToFg = shell->jobs[jobIndexToFg];
 
 				if ((jobToFg.status == stopped) && (kill(jobToFg.PID, SIGCONT) != SUCCESS)) // the job is stopeed and kill failed to continue the pid
+				{
 					cerr << "smash error: kill failed" << endl;
+					exit(-1);
+				}
 
 				else
 				{
@@ -149,6 +152,7 @@ int ExeCmd(string prompt)
 					{
 						shell->ClearFgJob();
 						cerr << "smash error: waitpid failed" << endl;
+						exit(-1);
 					}
 				}
 			}
@@ -170,7 +174,10 @@ int ExeCmd(string prompt)
 				Job& jobToFg = shell->jobs[jobIndexToFg];
 
 				if ((jobToFg.status == stopped) && (kill(jobToFg.PID, SIGCONT) != SUCCESS)) // the job is stopeed and kill failed to continue the pid
+				{
 					cerr << "smash error: kill failed" << endl;
+					exit(-1);
+				}
 
 				else
 				{
@@ -191,6 +198,7 @@ int ExeCmd(string prompt)
 					{
 						shell->ClearFgJob();
 						cerr << "smash error: waitpid failed" << endl;
+						exit(-1);
 					}
 				}
 			} 
@@ -210,7 +218,10 @@ int ExeCmd(string prompt)
 			{
 				Job &jobToBg = shell->jobs[stoppedJobIndexWithMaxJobID];
 				if (kill(jobToBg.PID, SIGCONT) != SUCCESS)
+				{
 					cerr << "smash error: kill failed" << endl;
+					exit(-1);
+				}
 
 				else
 					cout << "[" << jobToBg.jobID << "] " << jobToBg.prompt << " : " << jobToBg.PID << endl;
@@ -234,7 +245,10 @@ int ExeCmd(string prompt)
 				cout << "smash error: bg: job-id " << args[1] << " is already running in the background" << endl;
 
 				else if(kill(jobToBg.PID, SIGCONT) != SUCCESS)
+				{
 					cerr << "smash error: kill failed" << endl;
+					exit(-1);
+				}
 
 				else
 					cout << "[" << jobToBg.jobID << "] " << jobToBg.prompt << " : " << jobToBg.PID << endl;
@@ -264,7 +278,11 @@ int ExeCmd(string prompt)
 			{
 				Job& jobToSignal = shell->jobs[jobIndexToKill];
 				if (kill(jobToSignal.PID, sigNum))
+				{
 					cerr << "smash error: kill failed" << endl;
+					exit(-1);
+				}
+
 				else
 				{
 					if(sigNum == SIGSTOP)
@@ -331,8 +349,9 @@ void ExeExternal(string args[MAX_ARG], string prompt, string cmd, int num_arg)
 			//fork returned error
 				cerr << "smash error: fork failed" << endl;
 				free(charArgs);
+				exit(-1);
 		}
-				
+
 		case 0 :
 		{
 			// Child Process
@@ -370,6 +389,7 @@ void ExeExternal(string args[MAX_ARG], string prompt, string cmd, int num_arg)
 					{
 						shell->ClearFgJob();
 						cerr << "smash error: waitpid failed" << endl;
+						exit(-1);
 					}
 				}
 			}	 
