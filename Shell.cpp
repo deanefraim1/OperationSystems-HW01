@@ -19,7 +19,7 @@ Shell::Shell()
 
 int Shell::GetJobIndexByJobID(int id)
 {
-    for (int i = 0; i < jobs.size(); i++)
+    for (size_t i = 0; i < jobs.size(); i++)
     {
         if(jobs[i].jobID == id)
             return i;
@@ -29,7 +29,7 @@ int Shell::GetJobIndexByJobID(int id)
 
 int Shell::GetJobIndexByPID(int pid)
 {
-    for (int i = 0; i < jobs.size(); i++)
+    for (size_t i = 0; i < jobs.size(); i++)
     {
         if(jobs[i].PID == pid)
             return i;
@@ -39,7 +39,7 @@ int Shell::GetJobIndexByPID(int pid)
 
 void Shell::InsertJobSorted(Job job)
 {
-    int i;
+    size_t i;
     bool inserted = false;
     for (i = 0; i < jobs.size(); i++)
     {
@@ -74,7 +74,7 @@ void Shell::MoveJobToFg(int jobIndexToFg)
 
 int Shell::GetStoppedJobIndexWithMaxJobID()
 {
-    for (int i = jobs.size() - 1; i >= 0; i++)
+    for (size_t i = jobs.size() - 1; i >= 0; i++)
     {
         if(jobs[i].status == stopped)
             return i;
@@ -86,7 +86,7 @@ void Shell::UpdateJobs()
 {
     int status;
     pid_t waitpidReturnValue;
-    for (int i = 0; i < jobs.size(); i++)
+    for (size_t i = 0; i < jobs.size(); i++)
     {
         waitpidReturnValue = waitpid(jobs[i].PID, &status, WNOHANG | WCONTINUED);
         if (waitpidReturnValue > 0)
@@ -132,7 +132,7 @@ int Shell::GetNextAvailableJobID()
 
 void Shell::PrintAllJobsInfo()
 {
-    for (int i = 0; i < jobs.size(); i++)
+    for (size_t i = 0; i < jobs.size(); i++)
     {
 		cout << "[" << jobs[i].jobID << "] " << jobs[i].prompt << " : " << jobs[i].PID << " " << jobs[i].getRunningTime() << " secs";
 		if(jobs[i].status == stopped)
@@ -148,7 +148,7 @@ void Shell::PrintShellPID()
 
 void Shell::KillAllJobs()
 {
-    for (int i = 0; i < jobs.size(); i++)
+    for (size_t i = 0; i < jobs.size(); i++)
     {
 		cout << "[" << jobs[i].jobID << "] " << jobs[i].prompt << " - Sending SIGTERM..." << flush;
 		kill(jobs[i].PID, SIGTERM);
