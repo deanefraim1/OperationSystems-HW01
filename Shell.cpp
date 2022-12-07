@@ -88,7 +88,7 @@ void Shell::UpdateJobs()
     pid_t waitpidReturnValue;
     for (size_t i = 0; i < jobs.size(); i++)
     {
-        waitpidReturnValue = waitpid(jobs[i].PID, &status, WNOHANG | WCONTINUED);
+        waitpidReturnValue = waitpid(jobs[i].PID, &status, WNOHANG | WUNTRACED | WCONTINUED);
         if (waitpidReturnValue > 0)
         {
             if(WIFEXITED(status) || WIFSIGNALED(status))
@@ -105,7 +105,7 @@ void Shell::UpdateJobs()
             jobs.erase(jobs.begin() + i);
     }
 
-    waitpidReturnValue = waitpid(fgJob.PID, &status, WNOHANG | WCONTINUED);
+    waitpidReturnValue = waitpid(fgJob.PID, &status, WNOHANG | WUNTRACED | WCONTINUED);
     if (fgJob.PID != NOT_EXCIST)
     {
         if(waitpidReturnValue > 0)

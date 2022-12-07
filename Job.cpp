@@ -57,8 +57,8 @@ bool Job::waitUntilTerminated(double maxTimeToWait, double checkIntervals)
 
     while (maxTimeToWaitInMicroSeconds > 0)
     {
-        pid_t waitpidReturnValue = waitpid(PID, &status, WNOHANG); //NOTE - ask lior why although the job is stopped, its still succeded to terminate via sigterm?
-        if ((waitpidReturnValue > 0) && (WIFEXITED(status) || WIFSIGNALED(status))) // NOTE - ask lior if its ok to add if exited??
+        pid_t waitpidReturnValue = waitpid(PID, &status, WNOHANG);
+        if ((waitpidReturnValue > 0) && (WIFEXITED(status) || WIFSIGNALED(status)))
             return true;
         usleep(checkIntervalsInMicroSeconds);
 		maxTimeToWaitInMicroSeconds -= checkIntervalsInMicroSeconds;

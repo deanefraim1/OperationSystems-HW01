@@ -284,15 +284,8 @@ int ExeCmd(string prompt)
 				}
 
 				else
-				{
-					if(sigNum == SIGSTOP)
-						jobToSignal.UpdateFromRunningToStopped();
-
-					else if(sigNum == SIGKILL)
-						shell->jobs.erase(shell->jobs.begin() + jobIndexToKill);
-
 					cout << "signal number " << sigNum << " was sent to pid " << jobToSignal.PID << endl;
-				}
+				
 			}
 		}
 	}
