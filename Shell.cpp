@@ -97,7 +97,7 @@ void Shell::UpdateJobs()
             else if(WIFSTOPPED(status) && (jobs[i].status != stopped))
                 jobs[i].UpdateFromRunningToStopped();
             
-            else if(WIFCONTINUED(status)&& (jobs[i].status == stopped))
+            else if(WIFCONTINUED(status) && (jobs[i].status == stopped))
                 jobs[i].UpdateFromStoppedToBgRunning();
         }
 
