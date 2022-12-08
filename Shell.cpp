@@ -94,10 +94,10 @@ void Shell::UpdateJobs()
             if(WIFEXITED(status) || WIFSIGNALED(status))
                 jobs.erase(jobs.begin() + i);
 
-            else if(WIFSTOPPED(status) && (jobs[i].status != stopped))
+            else if(WIFSTOPPED(status))
                 jobs[i].UpdateFromRunningToStopped();
             
-            else if(WIFCONTINUED(status) && (jobs[i].status == stopped))
+            else if(WIFCONTINUED(status))
                 jobs[i].UpdateFromStoppedToBgRunning();
         }
 
