@@ -130,7 +130,7 @@ int ExeCmd(string prompt)
 				if ((jobToFg.status == stopped) && (kill(jobToFg.PID, SIGCONT) != SUCCESS)) // the job is stopeed and kill failed to continue the pid
 				{
 					cerr << "smash error: kill failed" << endl;
-					exit(-1);
+					exit(1);
 				}
 
 				else
@@ -152,7 +152,7 @@ int ExeCmd(string prompt)
 					{
 						shell->ClearFgJob();
 						cerr << "smash error: waitpid failed" << endl;
-						exit(-1);
+						exit(1);
 					}
 				}
 			}
@@ -176,7 +176,7 @@ int ExeCmd(string prompt)
 				if ((jobToFg.status == stopped) && (kill(jobToFg.PID, SIGCONT) != SUCCESS)) // the job is stopeed and kill failed to continue the pid
 				{
 					cerr << "smash error: kill failed" << endl;
-					exit(-1);
+					exit(1);
 				}
 
 				else
@@ -198,7 +198,7 @@ int ExeCmd(string prompt)
 					{
 						shell->ClearFgJob();
 						cerr << "smash error: waitpid failed" << endl;
-						exit(-1);
+						exit(1);
 					}
 				}
 			} 
@@ -247,7 +247,7 @@ int ExeCmd(string prompt)
 				else if(kill(jobToBg.PID, SIGCONT) != SUCCESS)
 				{
 					cerr << "smash error: kill failed" << endl;
-					exit(-1);
+					exit(1);
 				}
 
 				else
@@ -280,7 +280,7 @@ int ExeCmd(string prompt)
 				if (kill(jobToSignal.PID, sigNum))
 				{
 					cerr << "smash error: kill failed" << endl;
-					exit(-1);
+					exit(1);
 				}
 
 				else
@@ -342,7 +342,7 @@ void ExeExternal(string args[MAX_ARG], string prompt, string cmd, int num_arg)
 			//fork returned error
 				cerr << "smash error: fork failed" << endl;
 				free(charArgs);
-				exit(-1);
+				exit(1);
 		}
 
 		case 0 :
@@ -382,7 +382,7 @@ void ExeExternal(string args[MAX_ARG], string prompt, string cmd, int num_arg)
 					{
 						shell->ClearFgJob();
 						cerr << "smash error: waitpid failed" << endl;
-						exit(-1);
+						exit(1);
 					}
 				}
 			}	 
