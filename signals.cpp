@@ -24,7 +24,7 @@ void SignalHandler_ctrZ(int signal)
       
       else
       {
-         cerr << "smash error: kill failed" << endl;
+         perror("smash error: kill failed");
          exit(1);
       } 
    }
@@ -42,7 +42,7 @@ void SignalHandler_ctrC(int signal)
          
       else
       {
-         cerr << "smash error: kill failed" << endl;
+         perror("smash error: kill failed");
          exit(1);
       }
    }
