@@ -39,7 +39,7 @@ public:
     /// @return the index of the job if excist or -1 if no stopped job in the job vector
     int GetStoppedJobIndexWithMaxJobID();
 
-    /// @brief updates the job list and fgJob according to which one is stopped/finished
+    /// @brief updates the job list and fgJob according to status changed by waitpid
     void UpdateJobs();
 
     /// @brief find job with highest job id, and calc the next job id to enter the jobs vector
