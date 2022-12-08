@@ -30,8 +30,6 @@ Job::Job(int PID, int jobID, string prompt, string command, jobStatus status)
     time(&(this->timeStamp));
 }
 
-/// @brief calc the running time of "this".
-/// @return returns the running time
 double Job::getRunningTime()
 {
     if(status == stopped) // if the job is stopped, its running time is its timeStamp
@@ -45,10 +43,6 @@ double Job::getRunningTime()
     }
 }
 
-/// @brief check if the job excist every checkIntervals for maxTimeToWait
-/// @param maxTimeToWait 
-/// @param checkIntervals 
-/// @return true if the pid is killed, false if maxTimeToWait arrived and the pid is still alive.
 bool Job::waitUntilTerminated(double maxTimeToWait, double checkIntervals)
 {
     useconds_t checkIntervalsInMicroSeconds = (useconds_t)(checkIntervals * 1000000);

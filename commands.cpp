@@ -417,10 +417,6 @@ int ExeComp(string prompt)
 	return -1;
 }
 
-/// @brief initilize (with malloc!) an array of char* from array of cpp strings.
-/// @param stringArray 
-/// @param size 
-/// @return the place of the char* array.
 char **InitStringArrayToCharArray(string stringArray[], int size)
 {
 	char **charArray = (char**)malloc(sizeof(char *) * size);

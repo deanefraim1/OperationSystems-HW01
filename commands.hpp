@@ -23,7 +23,12 @@ using namespace std;
 
 int ExeComp(string prompt);
 int ExeCmd(string prompt);
-char **InitStringArrayToCharArray(string stringArray[], int size);
 void ExeExternal(string args[MAX_ARG], string prompt, string cmd, int num_arg);
+
+/// @brief initilize (with malloc!) an array of char* from array of cpp strings.
+/// @param stringArray 
+/// @param size 
+/// @return the place of the char* array.
+char **InitStringArrayToCharArray(string stringArray[], int size);
 
 #endif

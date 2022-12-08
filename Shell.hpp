@@ -31,7 +31,7 @@ public:
     /// @param job the given job to insert the vector
     void InsertJobSorted(Job job);
 
-    /// @brief swap between the fg job and the given job and give the new fg job a runing status and the old fg job a waiting status
+    /// @brief move the given job to the fgJob and updates its data (timeStamp, status)
     /// @param jobIteratorToFg 
     void MoveJobToFg(int jobIndexToFg);
 
@@ -39,7 +39,7 @@ public:
     /// @return the index of the job if excist or -1 if no stopped job in the job vector
     int GetStoppedJobIndexWithMaxJobID();
 
-    /// @brief updates the job list according to which one is done via sigexcist
+    /// @brief updates the job list and fgJob according to which one is stopped/finished
     void UpdateJobs();
 
     /// @brief find job with highest job id, and calc the next job id to enter the jobs vector
@@ -55,8 +55,10 @@ public:
     /// @brief kills all jobs excists and if SIGTERM fails, it sends SIGKILL
     void KillAllJobs();
 
+    /// @brief change the fgJob to stopped (handling the time and status) and pass it to the jobs list
     void StopFgJob();
 
+    /// @brief makes the fgJob empty
     void ClearFgJob();
 };
 
