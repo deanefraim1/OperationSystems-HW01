@@ -74,11 +74,16 @@ void Shell::MoveJobToFg(int jobIndexToFg)
 
 int Shell::GetStoppedJobIndexWithMaxJobID()
 {
-    for (size_t i = jobs.size() - 1; i >= 0; i++)
+    if(jobs.size() == 0)
+        return NOT_EXCIST;
+
+    for (int i = (int)jobs.size() - 1; i >= 0; i--) //cast to int to avoid stack overflow because of unsigned int
     {
+        cout << jobs[i].jobID << endl;
         if(jobs[i].status == stopped)
             return i;
     }
+
     return NOT_EXCIST;
 }
 
@@ -98,7 +103,10 @@ void Shell::UpdateJobs()
                 jobs[i].UpdateFromRunningToStopped();
             
             else if(WIFCONTINUED(status))
-                jobs[i].UpdateFromStoppedToBgRunning();
+                {
+                    jobs[i].UpdateFromStoppedToBgRunning();
+                }
+                
         }
 
         else if(waitpidReturnValue == -1)
