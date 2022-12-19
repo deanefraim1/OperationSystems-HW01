@@ -52,13 +52,13 @@ int ExeCmd(string prompt)
 	/*************************************************/
 	if (cmd == "cd")
 	{
-		if(num_arg == 1)
+		if(num_arg == 1 || ((num_arg == 2) && (args[2] == "&")))
 		{
 			if(args[1] == "..")
 			{
 				string newPwd = shell->pwd.substr(0, shell->pwd.find_last_of('/'));
 				if (chdir(newPwd.c_str()) == ERROR)
-					illegal_cmd = true;
+					perror("smash error: chdir failed");
 				else
 				{
 					shell->lastPwd = shell->pwd;
